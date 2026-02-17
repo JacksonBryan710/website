@@ -1,12 +1,11 @@
-import './App.css'
+import './App.css';
 
 function App() {
-
-  return (
-    <>
-    <h1>Test</h1>
-    </>
-  )
+    return (
+        <div id='bomb-casing'>
+            <img id='bomb' src={'/src/assets/bomb.png'} alt="Bomb" />
+        </div>
+    );
 }
 
-export default App
+export default App;
