@@ -1,11 +1,19 @@
-import './App.css';
+import './App.css'
+import Home from './pages/Home/Home'
+import Cooking from './pages/Cooking/Cooking'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 function App() {
     return (
-        <div id='bomb-casing'>
-            <img id='bomb' src={'/src/assets/bomb.png'} alt="Bomb" />
-        </div>
-    );
+        <>
+            <BrowserRouter>
+                <Routes>
+                    <Route path='/' element={<Home />} />
+                    <Route path='/cooking' element={<Cooking />} />
+                </Routes>
+            </BrowserRouter>
+        </>
+    )
 }
 
-export default App;
+export default App

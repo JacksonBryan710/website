@@ -1,0 +1,13 @@
+#bomb-casing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;;
+}
+
+#bomb {
+    width: auto;
+    height: auto;
+    max-width: 50%;
+    max-height: 90%;
+}
