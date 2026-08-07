@@ -1,39 +1,40 @@
 #cooking-page {
-    font-family: 'Open Sans', sans-serif;
-    max-width: 900px;
+    max-width: 700px;
     margin: 0 auto;
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 3rem;
+    flex: 1;
 }
 
 #cooking-page header h1 {
+    font-family: var(--retro-font-display);
+    font-size: 3rem;
     text-align: center;
     margin-bottom: 1.5rem;
+    color: var(--retro-accent);
+    text-shadow: 2px 2px 0 #000;
 }
 
 #recipes {
     width: 100%;
     border-collapse: collapse;
-    background: #fff;
 }
 
 #recipes th,
 #recipes td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--retro-border-light);
     padding: 0.75rem 1rem;
     text-align: left;
-    color: #222;
 }
 
 #recipes th {
-    background: #333;
-    color: #fff;
-    font-weight: 800;
+    font-family: var(--retro-font-display);
+    font-size: 1.1rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    background: #1a1a1a;
+    color: var(--retro-accent-2);
 }
 
 #recipes tbody tr:nth-child(even) {
-    background: #f7f7f7;
-}
-
-#recipes a {
-    color: inherit;
+    background: rgba(255, 255, 255, 0.04);
 }
