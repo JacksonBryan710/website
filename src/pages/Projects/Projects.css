@@ -46,4 +46,6 @@
     font-size: 1.3rem;
     color: var(--retro-accent);
     border-style: dashed;
+    border-color: var(--retro-border-light);
+    box-shadow: none;
 }
