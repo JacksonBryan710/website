@@ -1,0 +1,49 @@
+#projects-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+    flex: 1;
+}
+
+#projects-page header h1 {
+    font-family: var(--retro-font-display);
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--retro-accent);
+    text-shadow: 2px 2px 0 #000;
+}
+
+.project-list {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.project-card h2 {
+    font-family: var(--retro-font-display);
+    font-size: 1.8rem;
+    letter-spacing: 0.03em;
+    color: var(--retro-accent-2);
+    margin-top: 0;
+}
+
+.project-card p {
+    line-height: 1.6;
+}
+
+.project-tech {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.under-construction {
+    text-align: center;
+    font-family: var(--retro-font-display);
+    font-size: 1.3rem;
+    color: var(--retro-accent);
+    border-style: dashed;
+}

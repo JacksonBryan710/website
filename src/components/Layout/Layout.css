@@ -1,0 +1,11 @@
+#site-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#site-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}

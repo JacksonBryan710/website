@@ -1,0 +1,39 @@
+#cooking-page {
+    font-family: 'Open Sans', sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+#cooking-page header h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+#recipes {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+#recipes th,
+#recipes td {
+    border: 1px solid #ddd;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    color: #222;
+}
+
+#recipes th {
+    background: #333;
+    color: #fff;
+    font-weight: 800;
+}
+
+#recipes tbody tr:nth-child(even) {
+    background: #f7f7f7;
+}
+
+#recipes a {
+    color: inherit;
+}

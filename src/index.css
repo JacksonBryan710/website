@@ -1,5 +1,64 @@
 /** Background from: https://hekate2.github.io/website-tools/index.html?q= */
 
+:root {
+	--retro-accent: #39ff14;
+	--retro-accent-2: #ff2fd0;
+	--retro-ink: #f1f1f1;
+	--retro-panel: rgba(15, 15, 15, 0.82);
+	--retro-border-light: #999;
+	--retro-border-dark: #000;
+	--retro-font-display: 'VT323', monospace;
+}
+
 body {
 	background: url("/src/assets/backgrounds/metal004_light.jpg");
+	color: var(--retro-ink);
+	margin: 0;
+}
+
+a {
+	color: var(--retro-accent);
+}
+
+a:visited {
+	color: var(--retro-accent-2);
+}
+
+/* Beveled Win95/Geocities-style panel */
+.retro-box {
+	background: var(--retro-panel);
+	border: 2px solid;
+	border-color: var(--retro-border-light) var(--retro-border-dark) var(--retro-border-dark) var(--retro-border-light);
+	box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+	padding: 1.25rem 1.5rem;
+}
+
+/* Retro webring-style badge link */
+.badge-link {
+	display: inline-block;
+	font-family: var(--retro-font-display);
+	font-size: 1.15rem;
+	letter-spacing: 0.05em;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: var(--retro-ink);
+	background: #1a1a1a;
+	border: 2px solid;
+	border-color: var(--retro-border-light) var(--retro-border-dark) var(--retro-border-dark) var(--retro-border-light);
+	padding: 0.35rem 0.9rem;
+	box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.badge-link:visited {
+	color: var(--retro-ink);
+}
+
+.badge-link:hover {
+	color: #000;
+	background: var(--retro-accent);
+}
+
+.badge-link:active {
+	border-color: var(--retro-border-dark) var(--retro-border-light) var(--retro-border-light) var(--retro-border-dark);
+	box-shadow: none;
 }

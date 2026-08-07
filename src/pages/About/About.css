@@ -1,0 +1,25 @@
+#about-page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem 1rem 3rem;
+    flex: 1;
+}
+
+#about-page header h1 {
+    font-family: var(--retro-font-display);
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--retro-accent);
+    text-shadow: 2px 2px 0 #000;
+}
+
+#about-page .retro-box p {
+    line-height: 1.6;
+    font-size: 1.1rem;
+    margin: 0 0 1rem;
+}
+
+#about-page .retro-box p:last-child {
+    margin-bottom: 0;
+}

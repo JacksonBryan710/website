@@ -1,0 +1,44 @@
+#site-nav {
+    background: #1a1a1a;
+    border-bottom: 3px solid var(--retro-accent-2);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+#site-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.6rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+#site-nav li {
+    display: flex;
+    align-items: center;
+}
+
+.nav-sep {
+    color: var(--retro-accent-2);
+    margin: 0 0.6rem;
+}
+
+#site-nav a {
+    font-family: var(--retro-font-display);
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--retro-ink);
+}
+
+#site-nav a:visited {
+    color: var(--retro-ink);
+}
+
+#site-nav a:hover,
+#site-nav a.active {
+    color: var(--retro-accent);
+    text-decoration: underline;
+}
