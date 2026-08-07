@@ -1,7 +1,7 @@
 function Cooking() {
     return (
         <div>
-            Test
+            //TODO: Migrate cooking page from old site
         </div>
     )
 }
