@@ -2,12 +2,18 @@ import { useEffect, useState } from 'react';
 import './GoodreadsActivity.css';
 
 const GOODREADS_USER_ID = '179944323';
+const RSS2JSON_API_KEY = import.meta.env.VITE_RSS2JSON_API_KEY;
 const MAX_ENTRIES = 5;
 
 function rss2jsonUrlForShelf(shelf) {
     const feedUrl = `https://www.goodreads.com/review/list_rss/${GOODREADS_USER_ID}?shelf=${shelf}`;
-    // rss2json's `count` param requires a paid API key, so fetch its default page and slice client-side.
-    return `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`;
+    const params = new URLSearchParams({ rss_url: feedUrl });
+    // rss2json's `count` param requires an API key, so only ask for it when we have one.
+    if (RSS2JSON_API_KEY) {
+        params.set('api_key', RSS2JSON_API_KEY);
+        params.set('count', String(MAX_ENTRIES));
+    }
+    return `https://api.rss2json.com/v1/api.json?${params.toString()}`;
 }
 
 // rss2json flattens Goodreads' custom RSS fields into the description as

@@ -3,9 +3,18 @@ import './LetterboxdActivity.css';
 
 const LETTERBOXD_USERNAME = 'JackJack305';
 const FEED_URL = `https://letterboxd.com/${LETTERBOXD_USERNAME}/rss/`;
-// rss2json's `count` param requires a paid API key, so fetch its default page and slice client-side.
-const RSS2JSON_URL = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(FEED_URL)}`;
+const RSS2JSON_API_KEY = import.meta.env.VITE_RSS2JSON_API_KEY;
 const MAX_ENTRIES = 5;
+
+function buildRss2JsonUrl() {
+    const params = new URLSearchParams({ rss_url: FEED_URL });
+    // rss2json's `count` param requires an API key, so only ask for it when we have one.
+    if (RSS2JSON_API_KEY) {
+        params.set('api_key', RSS2JSON_API_KEY);
+        params.set('count', String(MAX_ENTRIES));
+    }
+    return `https://api.rss2json.com/v1/api.json?${params.toString()}`;
+}
 
 // Letterboxd diary RSS titles look like "Film Name, 2024 - ★★★½"
 function parseDiaryEntry(item) {
@@ -33,7 +42,7 @@ function LetterboxdActivity() {
     useEffect(() => {
         let cancelled = false;
 
-        fetch(RSS2JSON_URL)
+        fetch(buildRss2JsonUrl())
             .then((res) => res.json())
             .then((data) => {
                 if (cancelled) return;
