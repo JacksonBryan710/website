@@ -5,7 +5,7 @@ const links = [
     { to: '/about', label: 'About' },
     { to: '/now', label: 'Now' },
     { to: '/projects', label: 'Projects' },
-    { to: '/cooking', label: 'Recipes' },
+    { to: '/cooking', label: 'Cooking' },
 ];
 
 function Nav() {

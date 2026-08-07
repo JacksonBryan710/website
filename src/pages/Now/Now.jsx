@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import LetterboxdActivity from '../../components/LetterboxdActivity/LetterboxdActivity';
+import GoodreadsActivity from '../../components/GoodreadsActivity/GoodreadsActivity';
 import './Now.css';
 
 const elsewhere = [
@@ -18,20 +19,32 @@ function Now() {
         <div id="now-page">
             <header>
                 <h1>Now</h1>
-                <p className="now-subtitle">What I'm up to lately &mdash; updated whenever I remember to.</p>
+                <p className="now-subtitle">What I've been into lately &mdash; updated whenever I remember to.</p>
             </header>
 
             <main>
                 <section className="retro-box">
-                    <h2>Around here</h2>
-                    <p>
-                        I keep a running list of recipes I actually cook on the{' '}
-                        <Link to="/cooking">Recipes page</Link>.
-                    </p>
+                    <h2>Recently watched</h2>
+                    <LetterboxdActivity />
                 </section>
 
                 <section className="retro-box">
-                    <h2>Elsewhere on the web</h2>
+                    <h2>Favorite films</h2>
+                    <p className="now-note">// top 4 coming soon</p>
+                </section>
+
+                <section className="retro-box">
+                    <h2>Currently reading</h2>
+                    <GoodreadsActivity shelf="currently-reading" emptyLabel="Not reading anything at the moment." />
+                </section>
+
+                <section className="retro-box">
+                    <h2>Recently read</h2>
+                    <GoodreadsActivity shelf="read" />
+                </section>
+
+                <section className="retro-box">
+                    <h2>From the source</h2>
                     <p>Follow along with what I'm watching, reading, listening to, and my training:</p>
                     <ul className="badge-list">
                         {elsewhere.map((item) => (
@@ -45,7 +58,6 @@ function Now() {
                             <span className="badge-link badge-link-disabled">Hevy (soon)</span>
                         </li>
                     </ul>
-                    <p className="now-note">Hevy link is pending &mdash; hoping to wire it up through their API.</p>
                 </section>
             </main>
         </div>

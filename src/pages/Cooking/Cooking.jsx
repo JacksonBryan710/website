@@ -13,44 +13,44 @@ const recipes = [
 
 function Cooking() {
     useEffect(() => {
-        document.title = 'Jackson Bryan: Recipes';
+        document.title = 'Jackson Bryan: Cooking';
     }, []);
 
     return (
         <div id="cooking-page">
             <header>
-                <h1>Recipes</h1>
+                <h1>Cooking</h1>
             </header>
 
             <main>
-                <table id="recipes">
-                    <thead>
-                        <tr>
-                            <th>Recipe</th>
-                            <th>Prep Time</th>
-                            <th>Cook Time</th>
-                            <th>Total Time</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {recipes.map((recipe) => (
-                            <tr key={recipe.url}>
-                                <td>
-                                    <a href={recipe.url} target="_blank" rel="noopener noreferrer">
-                                        {recipe.name}
-                                    </a>
-                                </td>
-                                <td>{recipe.prepTime}</td>
-                                <td>{recipe.cookTime}</td>
-                                <td>{recipe.totalTime}</td>
+                <div className="retro-box">
+                    <table id="recipes">
+                        <thead>
+                            <tr>
+                                <th>Recipe</th>
+                                <th>Prep Time</th>
+                                <th>Cook Time</th>
+                                <th>Total Time</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </main>
+                        </thead>
 
-            <footer></footer>
+                        <tbody>
+                            {recipes.map((recipe) => (
+                                <tr key={recipe.url}>
+                                    <td>
+                                        <a href={recipe.url} target="_blank" rel="noopener noreferrer">
+                                            {recipe.name}
+                                        </a>
+                                    </td>
+                                    <td>{recipe.prepTime}</td>
+                                    <td>{recipe.cookTime}</td>
+                                    <td>{recipe.totalTime}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </main>
         </div>
     );
 }
