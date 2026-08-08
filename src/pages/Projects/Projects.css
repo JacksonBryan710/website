@@ -40,6 +40,12 @@
     opacity: 0.8;
 }
 
+.status-note {
+    font-size: 0.9rem;
+    opacity: 0.75;
+    margin-bottom: 1.5rem;
+}
+
 .under-construction {
     text-align: center;
     font-family: var(--retro-font-display);

@@ -1,36 +1,6 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabaseClient';
 import './GoodreadsActivity.css';
-
-const GOODREADS_USER_ID = '179944323';
-const RSS2JSON_API_KEY = import.meta.env.VITE_RSS2JSON_API_KEY;
-const MAX_ENTRIES = 5;
-
-function rss2jsonUrlForShelf(shelf) {
-    const feedUrl = `https://www.goodreads.com/review/list_rss/${GOODREADS_USER_ID}?shelf=${shelf}`;
-    const params = new URLSearchParams({ rss_url: feedUrl });
-    // rss2json's `count` param requires an API key, so only ask for it when we have one.
-    if (RSS2JSON_API_KEY) {
-        params.set('api_key', RSS2JSON_API_KEY);
-        params.set('count', String(MAX_ENTRIES));
-    }
-    return `https://api.rss2json.com/v1/api.json?${params.toString()}`;
-}
-
-// rss2json flattens Goodreads' custom RSS fields into the description as
-// "author: X<br> ... rating: Y<br> ...", so pull author/rating back out of it.
-function parseShelfEntry(item) {
-    const authorMatch = item.description.match(/author: ([^<]*)<br/);
-    const ratingMatch = item.description.match(/rating: (\d+)<br/);
-    const rating = ratingMatch ? Number(ratingMatch[1]) : 0;
-
-    return {
-        key: item.guid || item.link,
-        title: item.title,
-        author: authorMatch ? authorMatch[1].trim() : null,
-        rating: rating > 0 ? rating : null,
-        link: item.link,
-    };
-}
 
 function GoodreadsActivity({ shelf = 'read', emptyLabel = 'No recent shelf entries.' }) {
     const [books, setBooks] = useState(null);
@@ -39,12 +9,24 @@ function GoodreadsActivity({ shelf = 'read', emptyLabel = 'No recent shelf entri
     useEffect(() => {
         let cancelled = false;
 
-        fetch(rss2jsonUrlForShelf(shelf))
-            .then((res) => res.json())
-            .then((data) => {
+        supabase
+            .from('feed_cache')
+            .select('*')
+            .eq('source', 'goodreads')
+            .eq('feed_key', shelf)
+            .order('sort_order', { ascending: true })
+            .then(({ data, error: fetchError }) => {
                 if (cancelled) return;
-                if (data.status !== 'ok') throw new Error('rss2json returned an error');
-                setBooks(data.items.slice(0, MAX_ENTRIES).map(parseShelfEntry));
+                if (fetchError) throw fetchError;
+                setBooks(
+                    data.map((row) => ({
+                        key: row.id,
+                        title: row.title,
+                        author: row.subtitle,
+                        rating: row.rating,
+                        link: row.link,
+                    })),
+                );
             })
             .catch(() => {
                 if (!cancelled) setError(true);
