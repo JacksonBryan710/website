@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-// import { Link } from 'react-router-dom'; // needed again once the bio block below is restored
+import { Link } from 'react-router-dom';
 import './About.css';
 
 function About() {
@@ -15,26 +15,28 @@ function About() {
 
             <main>
                 <div className="retro-box">
-                    <p>// bio coming soon</p>
+                    <p>
+                        Hi, I'm Jackson &mdash; I'm currently based in New York City working in fintech, where I
+                        support an electronic trading platform serving institutional credit market participants
+                        across the syndicated loan and CLO space. I hold the SIE, Series 7, and Series 63 licenses.
+                    </p>
+                    <p>
+                        I studied <strong>Chemical Engineering</strong> for my Bachelor's and stayed at{' '}
+                        <strong>Carnegie Mellon University</strong> for a{' '}
+                        <strong>Master of Science in Management</strong>, specializing in Finance &mdash; a
+                        combination that's given me both a quantitative foundation and a finance-specific toolkit.
+                    </p>
+                    <p>
+                        Before my current role, I interned as a Process Engineer at HF Sinclair, where I worked
+                        hands-on with refinery operations, and as a Product and Project Strategy intern at Volvo
+                        Group, where I bridged market research and product strategy.
+                    </p>
+                    <p>
+                        Outside of work, I'm probably either at the pool hall, in the gym, or listening to music.
+                        For more of what I'm currently into, check the <Link to="/now">Now page</Link> &mdash; and{' '}
+                        <Link to="/projects">Projects</Link> for what I'm building.
+                    </p>
                 </div>
-                {/*
-                <div className="retro-box">
-                    <p>
-                        Hi, I'm Jackson. I'm currently a <strong>Market and Client Support Associate</strong>.
-                    </p>
-                    <p>
-                        My background is a bit of a zigzag: I studied <strong>Chemical Engineering</strong> for my
-                        Bachelor's, then went back for a <strong>Master of Science in Management</strong>,
-                        specializing in Finance &mdash; both at <strong>Carnegie Mellon University</strong>.
-                    </p>
-                    <p>
-                        I'm still figuring out exactly how to describe what I'm capable of. Rather than write a
-                        skills list I don't fully believe yet, I'd rather show it over time &mdash; check the{' '}
-                        <Link to="/now">Now page</Link> for what I'm currently into, and the{' '}
-                        <Link to="/projects">Projects page</Link> for what I'm building.
-                    </p>
-                </div>
-                */}
             </main>
         </div>
     );
