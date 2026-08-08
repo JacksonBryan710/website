@@ -1,0 +1,12 @@
+reviews:
+  path_filters:
+    - "!package-lock.json"
+  path_instructions:
+    - path: "supabase/migrations/**/*.sql"
+      instructions: >
+        Pay close attention to Row Level Security (RLS) policies and
+        GRANT/REVOKE statements in this migration. Flag any policy broader
+        than necessary, any new or altered table missing RLS entirely, and
+        any grant to `anon` or `authenticated` that allows write, update, or
+        delete access without clear justification in the migration or PR
+        description.
