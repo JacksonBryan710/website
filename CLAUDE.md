@@ -13,7 +13,7 @@ Database schema changes go in `supabase/migrations/*.sql` (raw, timestamp-prefix
 
 ## Workflow
 
-Work happens on `dev`; PRs merge `dev` → `main`; pushing to `main` triggers `.github/workflows/deploy.yml`, which builds and publishes `dist/` to GitHub Pages. `.github/workflows/ci.yml` runs lint + build on every PR — keep this passing before merging. `.coderabbit.yaml` adds automated PR review (CodeRabbit) with extra scrutiny on RLS/grants in `supabase/migrations/`.
+Each activity (feature, fix, chore) gets its own branch off `dev`, e.g. `add-photography-page`; PR that branch into `dev`. Periodically, `dev` → `main` via PR; pushing to `main` triggers `.github/workflows/deploy.yml`, which builds and publishes `dist/` to GitHub Pages. `.github/workflows/ci.yml` runs lint + build on every PR — keep this passing before merging. `.coderabbit.yaml` adds automated PR review (CodeRabbit) with extra scrutiny on RLS/grants in `supabase/migrations/`.
 
 ## Architecture
 
