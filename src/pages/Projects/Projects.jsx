@@ -1,40 +1,21 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { useEffect } from 'react';
+import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
 import './Projects.css';
 
 function Projects() {
-    const [projects, setProjects] = useState(null);
-    const [error, setError] = useState(false);
-
     useEffect(() => {
         document.title = 'Jackson Bryan: Projects';
     }, []);
 
-    useEffect(() => {
-        let cancelled = false;
-
-        supabase
-            .from('projects')
-            .select('*')
-            .order('sort_order', { ascending: true })
-            .then(({ data, error: fetchError }) => {
-                if (cancelled) return;
-                if (fetchError) throw fetchError;
-                setProjects(data);
-            })
-            .catch(() => {
-                if (!cancelled) setError(true);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
+    const { data: projects, error } = useSupabaseQuery(
+        (supabase) => supabase.from('projects').select('*').order('sort_order', { ascending: true }),
+        [],
+    );
 
     return (
-        <div id="projects-page">
+        <div id="projects-page" className="page">
             <header>
-                <h1>Projects</h1>
+                <h1 className="page-title">Projects</h1>
             </header>
 
             <main>
