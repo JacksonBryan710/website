@@ -14,6 +14,12 @@
     text-shadow: 2px 2px 0 #000;
 }
 
+.status-note {
+    font-size: 0.9rem;
+    opacity: 0.75;
+    margin-bottom: 1.5rem;
+}
+
 #recipes {
     width: 100%;
     border-collapse: collapse;

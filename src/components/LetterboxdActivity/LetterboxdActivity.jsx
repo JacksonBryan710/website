@@ -1,39 +1,6 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabaseClient';
 import './LetterboxdActivity.css';
-
-const LETTERBOXD_USERNAME = 'JackJack305';
-const FEED_URL = `https://letterboxd.com/${LETTERBOXD_USERNAME}/rss/`;
-const RSS2JSON_API_KEY = import.meta.env.VITE_RSS2JSON_API_KEY;
-const MAX_ENTRIES = 5;
-
-function buildRss2JsonUrl() {
-    const params = new URLSearchParams({ rss_url: FEED_URL });
-    // rss2json's `count` param requires an API key, so only ask for it when we have one.
-    if (RSS2JSON_API_KEY) {
-        params.set('api_key', RSS2JSON_API_KEY);
-        params.set('count', String(MAX_ENTRIES));
-    }
-    return `https://api.rss2json.com/v1/api.json?${params.toString()}`;
-}
-
-// Letterboxd diary RSS titles look like "Film Name, 2024 - ★★★½"
-function parseDiaryEntry(item) {
-    const match = item.title.match(/^(.+), (\d{4})(?: - (.+))?$/);
-    if (!match) return null;
-
-    const [, name, year, stars] = match;
-    const rating = stars
-        ? (stars.match(/★/g) || []).length + (stars.match(/½/g) || []).length * 0.5
-        : null;
-
-    return {
-        key: item.guid || item.link,
-        name,
-        year,
-        rating,
-        link: item.link,
-    };
-}
 
 function LetterboxdActivity() {
     const [films, setFilms] = useState(null);
@@ -42,12 +9,24 @@ function LetterboxdActivity() {
     useEffect(() => {
         let cancelled = false;
 
-        fetch(buildRss2JsonUrl())
-            .then((res) => res.json())
-            .then((data) => {
+        supabase
+            .from('feed_cache')
+            .select('*')
+            .eq('source', 'letterboxd')
+            .eq('feed_key', 'diary')
+            .order('sort_order', { ascending: true })
+            .then(({ data, error: fetchError }) => {
                 if (cancelled) return;
-                if (data.status !== 'ok') throw new Error('rss2json returned an error');
-                setFilms(data.items.slice(0, MAX_ENTRIES).map(parseDiaryEntry).filter(Boolean));
+                if (fetchError) throw fetchError;
+                setFilms(
+                    data.map((row) => ({
+                        key: row.id,
+                        name: row.title,
+                        year: row.subtitle,
+                        rating: row.rating,
+                        link: row.link,
+                    })),
+                );
             })
             .catch(() => {
                 if (!cancelled) setError(true);
