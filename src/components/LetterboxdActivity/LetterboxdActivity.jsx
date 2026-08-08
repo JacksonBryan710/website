@@ -1,41 +1,24 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
 import './LetterboxdActivity.css';
 
 function LetterboxdActivity() {
-    const [films, setFilms] = useState(null);
-    const [error, setError] = useState(false);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        supabase
-            .from('feed_cache')
-            .select('*')
-            .eq('source', 'letterboxd')
-            .eq('feed_key', 'diary')
-            .order('sort_order', { ascending: true })
-            .then(({ data, error: fetchError }) => {
-                if (cancelled) return;
-                if (fetchError) throw fetchError;
-                setFilms(
-                    data.map((row) => ({
-                        key: row.id,
-                        name: row.title,
-                        year: row.subtitle,
-                        rating: row.rating,
-                        link: row.link,
-                    })),
-                );
-            })
-            .catch(() => {
-                if (!cancelled) setError(true);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
+    const { data, error } = useSupabaseQuery(
+        (supabase) =>
+            supabase
+                .from('feed_cache')
+                .select('*')
+                .eq('source', 'letterboxd')
+                .eq('feed_key', 'diary')
+                .order('sort_order', { ascending: true }),
+        [],
+    );
+    const films = data?.map((row) => ({
+        key: row.id,
+        name: row.title,
+        year: row.subtitle,
+        rating: row.rating,
+        link: row.link,
+    }));
 
     if (error) {
         return <p className="now-note">Couldn't load recent Letterboxd activity right now.</p>;

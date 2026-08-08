@@ -15,7 +15,7 @@ function Nav() {
                 {links.map((link, i) => (
                     <li key={link.to}>
                         {i > 0 && <span className="nav-sep" aria-hidden="true">★</span>}
-                        <NavLink to={link.to} end={link.end} className={({ isActive }) => (isActive ? 'active' : undefined)}>
+                        <NavLink to={link.to} className={({ isActive }) => (isActive ? 'active' : undefined)}>
                             {link.label}
                         </NavLink>
                     </li>

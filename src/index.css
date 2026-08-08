@@ -62,3 +62,26 @@ a:visited {
 	border-color: var(--retro-border-dark) var(--retro-border-light) var(--retro-border-light) var(--retro-border-dark);
 	box-shadow: none;
 }
+
+/* Shared page layout: content column + big retro heading, used by every page */
+.page {
+	max-width: 700px;
+	margin: 0 auto;
+	padding: 2rem 1rem 3rem;
+	flex: 1;
+}
+
+.page-title {
+	font-family: var(--retro-font-display);
+	font-size: 3rem;
+	text-align: center;
+	margin-bottom: 1.5rem;
+	color: var(--retro-accent);
+	text-shadow: 2px 2px 0 #000;
+}
+
+.status-note {
+	font-size: 0.9rem;
+	opacity: 0.75;
+	margin-bottom: 1.5rem;
+}

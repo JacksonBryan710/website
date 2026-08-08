@@ -1,41 +1,24 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
 import './GoodreadsActivity.css';
 
 function GoodreadsActivity({ shelf = 'read', emptyLabel = 'No recent shelf entries.' }) {
-    const [books, setBooks] = useState(null);
-    const [error, setError] = useState(false);
-
-    useEffect(() => {
-        let cancelled = false;
-
-        supabase
-            .from('feed_cache')
-            .select('*')
-            .eq('source', 'goodreads')
-            .eq('feed_key', shelf)
-            .order('sort_order', { ascending: true })
-            .then(({ data, error: fetchError }) => {
-                if (cancelled) return;
-                if (fetchError) throw fetchError;
-                setBooks(
-                    data.map((row) => ({
-                        key: row.id,
-                        title: row.title,
-                        author: row.subtitle,
-                        rating: row.rating,
-                        link: row.link,
-                    })),
-                );
-            })
-            .catch(() => {
-                if (!cancelled) setError(true);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, [shelf]);
+    const { data, error } = useSupabaseQuery(
+        (supabase) =>
+            supabase
+                .from('feed_cache')
+                .select('*')
+                .eq('source', 'goodreads')
+                .eq('feed_key', shelf)
+                .order('sort_order', { ascending: true }),
+        [shelf],
+    );
+    const books = data?.map((row) => ({
+        key: row.id,
+        title: row.title,
+        author: row.subtitle,
+        rating: row.rating,
+        link: row.link,
+    }));
 
     if (error) {
         return <p className="now-note">Couldn't load recent Goodreads activity right now.</p>;

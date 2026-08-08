@@ -1,40 +1,21 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { useEffect } from 'react';
+import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
 import './Cooking.css';
 
 function Cooking() {
-    const [recipes, setRecipes] = useState(null);
-    const [error, setError] = useState(false);
-
     useEffect(() => {
         document.title = 'Jackson Bryan: Cooking';
     }, []);
 
-    useEffect(() => {
-        let cancelled = false;
-
-        supabase
-            .from('recipes')
-            .select('*')
-            .order('sort_order', { ascending: true })
-            .then(({ data, error: fetchError }) => {
-                if (cancelled) return;
-                if (fetchError) throw fetchError;
-                setRecipes(data);
-            })
-            .catch(() => {
-                if (!cancelled) setError(true);
-            });
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
+    const { data: recipes, error } = useSupabaseQuery(
+        (supabase) => supabase.from('recipes').select('*').order('sort_order', { ascending: true }),
+        [],
+    );
 
     return (
-        <div id="cooking-page">
+        <div id="cooking-page" className="page">
             <header>
-                <h1>Cooking</h1>
+                <h1 className="page-title">Cooking</h1>
             </header>
 
             <main>

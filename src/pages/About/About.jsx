@@ -8,9 +8,9 @@ function About() {
     }, []);
 
     return (
-        <div id="about-page">
+        <div id="about-page" className="page">
             <header>
-                <h1>About Me</h1>
+                <h1 className="page-title">About Me</h1>
             </header>
 
             <main>

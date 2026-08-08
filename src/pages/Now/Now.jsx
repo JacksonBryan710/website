@@ -16,9 +16,9 @@ function Now() {
     }, []);
 
     return (
-        <div id="now-page">
+        <div id="now-page" className="page">
             <header>
-                <h1>Now</h1>
+                <h1 className="page-title">Now</h1>
                 <p className="now-subtitle">What I've been into lately &mdash; updated whenever I remember to.</p>
             </header>
 
