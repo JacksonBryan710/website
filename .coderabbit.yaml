@@ -1,0 +1,19 @@
+reviews:
+  path_filters:
+    - "!package-lock.json"
+  path_instructions:
+    - path: "supabase/migrations/**/*.sql"
+      instructions: >
+        Pay close attention to Row Level Security (RLS) policies and
+        GRANT/REVOKE statements in this migration, across all roles
+        (`anon`, `authenticated`, `service_role`, `public`, and any custom
+        roles) and privilege types, including schema-level grants (e.g.
+        `grant usage on schema ...`) and default privileges, not just
+        per-table grants. Flag any policy broader than necessary and any
+        new or altered table missing RLS entirely. For `anon` and
+        `authenticated`, flag write, update, or delete access without clear
+        justification in the migration or PR description. `service_role`
+        (and other server-side/custom roles) intentionally bypasses RLS, so
+        don't flag its write access by default — instead flag it only when
+        the grant looks broader than the specific server-side operation it
+        supports, or lacks a comment explaining that scope.
