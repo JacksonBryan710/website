@@ -1,9 +1,11 @@
 // Refreshes public.hevy_cache with a summary of the most recent Hevy workout
 // (date + total training volume). Invoked by Hevy's own webhook ("notify on
 // new workout") rather than a schedule, since Hevy pushes on save instead of
-// exposing a public feed like Letterboxd/Goodreads. The webhook payload only
-// carries the workout id, so this fetches the full workout from the Hevy API
-// (a Hevy Pro feature) with HEVY_API_KEY before caching it.
+// exposing a public feed like Letterboxd/Goodreads. The webhook body is just
+// {"workoutId": "..."} — confirmed by logging a real payload, since existing
+// write-ups describe a differently nested shape — so this fetches the full
+// workout from the Hevy API (a Hevy Pro feature) with HEVY_API_KEY before
+// caching it.
 //
 // Hevy's webhooks aren't signed (no Stripe-style signature header), so this
 // is deployed with auth: 'none' + verify_jwt = false — Supabase's own JWT
@@ -36,7 +38,7 @@ type HevyWorkout = {
 };
 
 type HevyWebhookPayload = {
-  payload: { workoutId: string };
+  workoutId: string;
 };
 
 // Training volume = weight x reps across working sets. Warmup sets are
@@ -63,13 +65,13 @@ export default {
 
     const apiKey = Deno.env.get("HEVY_API_KEY");
     if (!apiKey) {
+      console.error("HEVY_API_KEY is not set");
       return Response.json({ ok: false, error: "HEVY_API_KEY is not set" }, { status: 500 });
     }
 
     try {
-      const { payload } = (await req.json()) as HevyWebhookPayload;
-      const workoutId = payload?.workoutId;
-      if (!workoutId) throw new Error("webhook payload missing payload.workoutId");
+      const { workoutId } = (await req.json()) as HevyWebhookPayload;
+      if (!workoutId) throw new Error("webhook payload missing workoutId");
 
       const res = await fetch(`https://api.hevyapp.com/v1/workouts/${workoutId}`, {
         headers: { "api-key": apiKey, Accept: "application/json" },
@@ -93,6 +95,7 @@ export default {
       return Response.json({ ok: true });
     } catch (err) {
       const message = err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : String(err);
+      console.error(message);
       return Response.json({ ok: false, error: message }, { status: 500 });
     }
   }),
