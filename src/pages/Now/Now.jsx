@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import LetterboxdActivity from '../../components/LetterboxdActivity/LetterboxdActivity';
 import GoodreadsActivity from '../../components/GoodreadsActivity/GoodreadsActivity';
+import HevyActivity from '../../components/HevyActivity/HevyActivity';
 import './Now.css';
 
 const elsewhere = [
@@ -44,6 +45,11 @@ function Now() {
                 </section>
 
                 <section className="retro-box">
+                    <h2>Latest lift</h2>
+                    <HevyActivity />
+                </section>
+
+                <section className="retro-box">
                     <h2>From the source</h2>
                     <p>Follow along with what I'm watching, reading, listening to, and my training:</p>
                     <ul className="badge-list">
@@ -54,9 +60,6 @@ function Now() {
                                 </a>
                             </li>
                         ))}
-                        <li>
-                            <span className="badge-link badge-link-disabled">Hevy (soon)</span>
-                        </li>
                     </ul>
                 </section>
             </main>
