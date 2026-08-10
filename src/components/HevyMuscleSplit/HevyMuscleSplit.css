@@ -1,0 +1,29 @@
+.hevy-muscle-split {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hevy-muscle-split-legend {
+    padding: 0.5rem 0.6rem;
+    margin-top: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.hevy-muscle-split-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-family: var(--retro-font-display);
+}
+
+.hevy-muscle-split-swatch {
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+}

@@ -1,0 +1,43 @@
+#training-page {
+    max-width: 820px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+#training-page header .page-title {
+    margin-bottom: 0.25rem;
+}
+
+.training-subtitle {
+    text-align: center;
+    font-style: italic;
+    opacity: 0.85;
+    margin-top: 0;
+}
+
+#training-page main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.training-row {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.training-row-2col {
+    grid-template-columns: 1fr 1fr;
+}
+
+.training-row-muscle {
+    grid-template-columns: 1fr 1.4fr;
+}
+
+@media (max-width: 640px) {
+    .training-row-2col,
+    .training-row-muscle {
+        grid-template-columns: 1fr;
+    }
+}
