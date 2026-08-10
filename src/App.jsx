@@ -3,6 +3,7 @@ import About from './pages/About/About'
 import Now from './pages/Now/Now'
 import Projects from './pages/Projects/Projects'
 import Cooking from './pages/Cooking/Cooking'
+import Training from './pages/Training/Training'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
                     <Route path='/now' element={<Now />} />
                     <Route path='/projects' element={<Projects />} />
                     <Route path='/cooking' element={<Cooking />} />
+                    <Route path='/training' element={<Training />} />
                 </Route>
             </Routes>
         </BrowserRouter>

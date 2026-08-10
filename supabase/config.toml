@@ -424,10 +424,16 @@ entrypoint = "./functions/refresh-feed-cache/index.ts"
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/refresh-feed-cache/*.html" ]
 
-[functions.refresh-hevy-cache]
+[functions.sync-hevy-workout]
 enabled = true
 # Public: Hevy's webhook can't send Supabase credentials. The function checks
 # its own shared secret (HEVY_WEBHOOK_SECRET) instead — see index.ts.
 verify_jwt = false
-import_map = "./functions/refresh-hevy-cache/deno.json"
-entrypoint = "./functions/refresh-hevy-cache/index.ts"
+import_map = "./functions/sync-hevy-workout/deno.json"
+entrypoint = "./functions/sync-hevy-workout/index.ts"
+
+[functions.sync-hevy-history]
+enabled = true
+verify_jwt = false
+import_map = "./functions/sync-hevy-history/deno.json"
+entrypoint = "./functions/sync-hevy-history/index.ts"

@@ -3,10 +3,16 @@
 :root {
 	--retro-accent: #39ff14;
 	--retro-accent-2: #ff2fd0;
+	--retro-accent-3: #39d1ff;
+	--retro-accent-4: #ffe14d;
+	--retro-accent-5: #ff8a3d;
+	--retro-neutral: #c9c9c9;
 	--retro-ink: #f1f1f1;
 	--retro-panel: rgba(15, 15, 15, 0.82);
 	--retro-border-light: #999;
 	--retro-border-dark: #000;
+	--retro-crt-header: #000020;
+	--retro-crt-body: #0d1140;
 	--retro-font-display: 'VT323', monospace;
 }
 
@@ -84,4 +90,50 @@ a:visited {
 	font-size: 0.9rem;
 	opacity: 0.75;
 	margin-bottom: 1.5rem;
+}
+
+/* Nested "sunken CRT" double-bevel panel, for data-dense widgets (Training
+   page). Sits inside a .retro-box, not a replacement for it. */
+.retro-crt-panel {
+	border: 2px solid;
+	border-color: #e8e8e8 #000 #000 #e8e8e8;
+	background: #000;
+	padding: 2px;
+	height: 100%;
+	box-sizing: border-box;
+}
+
+.retro-crt-panel-inner {
+	border: 2px solid;
+	border-color: #6a6a6a #fff #fff #6a6a6a;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.retro-crt-panel-header {
+	background: var(--retro-crt-header);
+	padding: 0.4rem 0.6rem;
+	border-bottom: 2px solid #000;
+	font-family: var(--retro-font-display);
+	font-size: 1.1rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--retro-accent);
+}
+
+.retro-crt-panel-body {
+	flex: 1;
+	box-sizing: border-box;
+	background: var(--retro-crt-body);
+	padding: 1.5rem;
+}
+
+/* Shared sunken legend-box chrome, reused by Frequency/MuscleSplit/
+   DurationTrend. Each widget's own CSS still supplies inner layout (flex vs
+   grid, gap) and spacing (padding, margin-top), since those vary. */
+.retro-crt-legend {
+	background: var(--retro-crt-header);
+	border: 1px solid;
+	border-color: #6a6a6a #fff #fff #6a6a6a;
 }

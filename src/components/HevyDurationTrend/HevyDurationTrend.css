@@ -1,0 +1,48 @@
+.hevy-duration-trend-caption {
+    font-size: 0.8rem;
+    opacity: 0.75;
+    margin: 0 0 1.1rem;
+    font-family: var(--retro-font-display);
+}
+
+.hevy-duration-trend-svg {
+    display: block;
+}
+
+.hevy-duration-trend-range {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+    font-family: var(--retro-font-display);
+}
+
+.hevy-duration-trend-legend {
+    padding: 0.5rem 0.6rem;
+    margin-top: 0.9rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 0.75rem;
+}
+
+.hevy-duration-trend-legend-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-family: var(--retro-font-display);
+}
+
+.hevy-duration-trend-swatch {
+    width: 9px;
+    height: 9px;
+    display: inline-block;
+}
+
+.hevy-duration-trend-total {
+    font-size: 0.8rem;
+    opacity: 0.65;
+    margin-top: 0.9rem;
+    font-family: var(--retro-font-display);
+}

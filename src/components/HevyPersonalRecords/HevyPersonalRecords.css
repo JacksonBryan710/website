@@ -1,0 +1,25 @@
+.hevy-prs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.hevy-prs li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 1.05rem;
+    border-bottom: 1px dotted rgba(80, 220, 220, 0.3);
+    padding-bottom: 0.3rem;
+}
+
+.hevy-prs-value {
+    color: var(--retro-accent);
+    font-family: var(--retro-font-display);
+    font-size: 1.2rem;
+    white-space: nowrap;
+    margin-left: 0.75rem;
+}

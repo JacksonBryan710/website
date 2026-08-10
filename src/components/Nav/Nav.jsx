@@ -6,6 +6,7 @@ const links = [
     { to: '/now', label: 'Now' },
     { to: '/projects', label: 'Projects' },
     { to: '/cooking', label: 'Cooking' },
+    { to: '/training', label: 'Training' },
 ];
 
 function Nav() {
