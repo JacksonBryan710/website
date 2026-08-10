@@ -1,4 +1,7 @@
 #site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background: #1a1a1a;
     border-bottom: 3px solid var(--retro-accent-2);
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);

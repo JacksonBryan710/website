@@ -16,10 +16,18 @@
 	--retro-font-display: 'VT323', monospace;
 }
 
+html {
+	background: url("/src/assets/backgrounds/metal004_light.jpg");
+	background-attachment: fixed;
+	overscroll-behavior-y: none;
+}
+
 body {
 	background: url("/src/assets/backgrounds/metal004_light.jpg");
+	background-attachment: fixed;
 	color: var(--retro-ink);
 	margin: 0;
+	overscroll-behavior-y: none;
 }
 
 a {
