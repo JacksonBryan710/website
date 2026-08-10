@@ -1,6 +1,6 @@
 -- Schedules sync-hevy-history's default "reconcile" mode (last 3 days via
 -- Hevy's /v1/workouts/events, see supabase/functions/sync-hevy-history) to
--- run daily as a safety net for any refresh-hevy-cache webhook call that
+-- run daily as a safety net for any sync-hevy-workout webhook call that
 -- never arrived. Mirrors the pg_cron + pg_net job that already exists for
 -- refresh-feed-cache -- that one predates this repo's migrations and was
 -- set up by hand in the SQL editor, so it isn't version-controlled; this

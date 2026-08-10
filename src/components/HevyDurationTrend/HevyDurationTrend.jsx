@@ -112,7 +112,12 @@ function HevyDurationTrend() {
             const toXY = (i, v) => ({ x: PAD + i * xStep, y: CHART_H - PAD - (v - yMin) * yScale });
 
             const lines = routines.map((r) => {
-                const points = r.minutes.map((v, i) => ({ ...toXY(i, v), v }));
+                // Right-align: a routine with fewer than maxN sessions still
+                // ends at the rightmost "most recent" tick, it just starts
+                // later, rather than being left-aligned and falling short of
+                // "most recent".
+                const offset = maxN - r.minutes.length;
+                const points = r.minutes.map((v, i) => ({ ...toXY(i + offset, v), v }));
                 const avgMin = Math.round(r.minutes.reduce((a, b) => a + b, 0) / r.minutes.length);
                 return { ...r, points, avgMin };
             });

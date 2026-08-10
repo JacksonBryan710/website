@@ -58,7 +58,7 @@ function HevyFrequency() {
                     <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,0.08)' }} />
                     <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,0.45)' }} />
                     <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,1)' }} />
-                    <span>6+ workouts</span>
+                    <span>5+ workouts</span>
                 </div>
             </>
         );

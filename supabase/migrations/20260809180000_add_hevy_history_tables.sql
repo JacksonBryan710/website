@@ -2,7 +2,7 @@
 -- workouts (one row per workout) and sets (one row per logged set), so the
 -- Training page can compute streaks, weekly frequency, muscle-group split,
 -- personal records, and duration trends -- none of which are derivable from
--- a single latest-workout snapshot. Written by the refresh-hevy-cache
+-- a single latest-workout snapshot. Written by the sync-hevy-workout
 -- webhook (per new workout) and the sync-hevy-history Edge Function
 -- (historical backfill + periodic reconciliation), both via the
 -- service_role key, same pattern as hevy_cache/feed_cache. Nothing in this

@@ -132,7 +132,7 @@ export default {
     const isFull = url.searchParams.get("mode") === "full";
     const daysParam = url.searchParams.get("days");
     const parsedDays = daysParam === null ? NaN : Number(daysParam);
-    const days = Number.isFinite(parsedDays) ? parsedDays : (isFull ? 400 : 3);
+    const days = Number.isFinite(parsedDays) && parsedDays > 0 ? parsedDays : (isFull ? 400 : 3);
     const errors: Record<string, string> = {};
 
     try {
@@ -148,26 +148,19 @@ export default {
 
       if (isFull) {
         const workoutsSynced = await syncFull(ctx.supabaseAdmin, apiKey, days, errors);
-        return Response.json({
-          ok: Object.keys(errors).length === 0,
-          mode: "full",
-          days,
-          exerciseTemplatesSynced,
-          workoutsSynced,
-          errors,
-        });
+        const ok = Object.keys(errors).length === 0;
+        return Response.json(
+          { ok, mode: "full", days, exerciseTemplatesSynced, workoutsSynced, errors },
+          { status: ok ? 200 : 207 },
+        );
       }
 
       const { synced, deleted } = await syncReconcile(ctx.supabaseAdmin, apiKey, days, errors);
-      return Response.json({
-        ok: Object.keys(errors).length === 0,
-        mode: "reconcile",
-        days,
-        exerciseTemplatesSynced,
-        workoutsSynced: synced,
-        workoutsDeleted: deleted,
-        errors,
-      });
+      const ok = Object.keys(errors).length === 0;
+      return Response.json(
+        { ok, mode: "reconcile", days, exerciseTemplatesSynced, workoutsSynced: synced, workoutsDeleted: deleted, errors },
+        { status: ok ? 200 : 207 },
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.error(message);

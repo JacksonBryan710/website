@@ -49,6 +49,7 @@ const HEVY_API_BASE = "https://api.hevyapp.com/v1";
 async function hevyFetch<T>(path: string, apiKey: string): Promise<T> {
   const res = await fetch(`${HEVY_API_BASE}${path}`, {
     headers: { "api-key": apiKey, Accept: "application/json" },
+    signal: AbortSignal.timeout(15000),
   });
   const body = await res.text();
   if (!res.ok) {
@@ -119,16 +120,23 @@ type SupabaseAdmin = any;
 // full-batch replace of this workout's rows is the simplest way to stay
 // idempotent on rerun -- mirrors the delete-then-insert idiom both existing
 // Edge Functions (refresh-feed-cache, the old refresh-hevy-cache) already
-// use, but insert-then-delete-others rather than delete-then-insert: if
-// Hevy redelivers the same webhook and two calls for the same workout_id
-// interleave, whichever call's delete runs last removes the other call's
-// rows too (they're not in *its* just-inserted id list), converging on one
-// clean batch instead of a duplicated one. If a concurrent "deleted" event
-// (via deleteWorkout, e.g. from sync-hevy-history's reconcile) removes the
-// parent hevy_workouts row in between, the sets insert fails its foreign
-// key (Postgres 23503) -- treated as the workout no longer existing rather
-// than a hard error, since inserting orphan sets for it would be moot.
+// use, but insert-then-delete-older rather than delete-then-insert: an
+// earlier version deleted "everything not in my just-inserted id list",
+// which converges correctly for a single call but not under concurrency --
+// if Hevy redelivers the same webhook and two calls for the same
+// workout_id interleave (insert A, insert B, delete A removes B's rows,
+// delete B removes A's rows), BOTH batches can end up deleted, leaving the
+// workout with zero sets. Deleting only rows strictly older than this
+// call's own fetched_at timestamp instead guarantees the chronologically
+// later call's rows always survive, in every interleaving -- the worst
+// case on an exact timestamp tie is duplicate rows, not zero. If a
+// concurrent "deleted" event (via deleteWorkout, e.g. from
+// sync-hevy-history's reconcile) removes the parent hevy_workouts row in
+// between, the sets insert fails its foreign key (Postgres 23503) --
+// treated as the workout no longer existing rather than a hard error,
+// since inserting orphan sets for it would be moot.
 export async function upsertWorkout(supabaseAdmin: SupabaseAdmin, workout: HevyWorkout) {
+  const fetchedAt = new Date().toISOString();
   const { error: workoutError } = await supabaseAdmin.from("hevy_workouts").upsert(
     {
       workout_id: workout.id,
@@ -139,7 +147,7 @@ export async function upsertWorkout(supabaseAdmin: SupabaseAdmin, workout: HevyW
       duration_seconds: durationSeconds(workout),
       exercise_count: workout.exercises.length,
       total_volume_kg: totalVolumeKg(workout),
-      fetched_at: new Date().toISOString(),
+      fetched_at: fetchedAt,
     },
     { onConflict: "workout_id" },
   );
@@ -155,27 +163,23 @@ export async function upsertWorkout(supabaseAdmin: SupabaseAdmin, workout: HevyW
       set_type: set.type,
       weight_kg: set.weight_kg,
       reps: set.reps,
+      fetched_at: fetchedAt,
     }))
   );
 
-  if (rows.length === 0) {
-    const { error: deleteError } = await supabaseAdmin.from("hevy_sets").delete().eq("workout_id", workout.id);
-    if (deleteError) throw deleteError;
-    return;
+  if (rows.length > 0) {
+    const { error: setsError } = await supabaseAdmin.from("hevy_sets").insert(rows);
+    if (setsError) {
+      if (setsError.code === "23503") return;
+      throw setsError;
+    }
   }
 
-  const { data: inserted, error: setsError } = await supabaseAdmin.from("hevy_sets").insert(rows).select("id");
-  if (setsError) {
-    if (setsError.code === "23503") return;
-    throw setsError;
-  }
-
-  const insertedIds = (inserted as { id: string }[]).map((row) => row.id);
   const { error: deleteError } = await supabaseAdmin
     .from("hevy_sets")
     .delete()
     .eq("workout_id", workout.id)
-    .not("id", "in", `(${insertedIds.join(",")})`);
+    .lt("fetched_at", fetchedAt);
   if (deleteError) throw deleteError;
 }
 

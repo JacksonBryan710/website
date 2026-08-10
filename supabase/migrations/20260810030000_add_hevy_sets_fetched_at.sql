@@ -1,0 +1,15 @@
+-- Adds a per-row sync timestamp to hevy_sets so upsertWorkout (see
+-- supabase/functions/_shared/hevy.ts) can safely replace a workout's sets
+-- under concurrent invocations -- e.g. Hevy redelivering the same webhook,
+-- or the daily reconcile job processing an "updated" event for a workout
+-- the real-time webhook is also mid-processing.
+--
+-- The previous approach deleted "everything not in this call's
+-- just-inserted id list", which converges correctly for a single call but
+-- not when two calls' insert-then-delete steps interleave: each call's
+-- delete ends up removing the OTHER call's just-inserted rows too, and
+-- both batches can be fully deleted, leaving the workout with zero sets.
+-- Deleting only rows strictly older than this call's own fetched_at
+-- (captured once, before either the insert or delete) guarantees the
+-- chronologically later call's rows always survive, in every interleaving.
+alter table public.hevy_sets add column fetched_at timestamptz not null default now();
