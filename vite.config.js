@@ -6,6 +6,9 @@ import { resolve } from 'path';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
+    server: {
+        port: Number(process.env.PORT) || 5173,
+    },
     plugins: [
         react(),
         viteStaticCopy({

@@ -1,0 +1,22 @@
+.hevy-streak {
+    text-align: center;
+}
+
+.hevy-streak-current {
+    font-family: var(--retro-font-display);
+    font-size: 5.5rem;
+    line-height: 1;
+    color: var(--retro-accent);
+    text-shadow: 2px 2px 0 #000;
+}
+
+.hevy-streak-current span {
+    font-size: 2.2rem;
+}
+
+.hevy-streak-best {
+    font-size: 0.85rem;
+    opacity: 0.75;
+    margin-top: 0.3rem;
+    font-family: var(--retro-font-display);
+}

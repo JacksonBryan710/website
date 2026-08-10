@@ -1,0 +1,61 @@
+.hevy-latest-lift {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.hevy-latest-lift-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px dotted rgba(150, 240, 240, 0.5);
+    padding-bottom: 0.7rem;
+    margin-bottom: 1rem;
+}
+
+.hevy-latest-lift-title {
+    font-family: var(--retro-font-display);
+    font-size: 1.7rem;
+    color: var(--retro-accent);
+}
+
+.hevy-latest-lift-date {
+    font-size: 1rem;
+    color: #b9dede;
+    font-family: var(--retro-font-display);
+}
+
+.hevy-latest-lift-stats {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.9rem;
+}
+
+.hevy-latest-lift-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.hevy-latest-lift-label {
+    font-size: 1.05rem;
+    color: #b9dede;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--retro-font-display);
+}
+
+.hevy-latest-lift-value {
+    font-family: var(--retro-font-display);
+    font-size: 1.6rem;
+}
+
+.hevy-latest-lift-value-blue {
+    color: var(--retro-accent-3);
+}
+
+.hevy-latest-lift-value-pink {
+    color: var(--retro-accent-2);
+}
