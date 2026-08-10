@@ -18,12 +18,14 @@
 
 html {
 	background: url("/src/assets/backgrounds/metal004_light.jpg");
+	overscroll-behavior-y: none;
 }
 
 body {
 	background: url("/src/assets/backgrounds/metal004_light.jpg");
 	color: var(--retro-ink);
 	margin: 0;
+	overscroll-behavior-y: none;
 }
 
 a {
