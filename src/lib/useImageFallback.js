@@ -7,10 +7,17 @@ import { useState } from 'react';
 // own frame markup, pixelation size, and CSS (48px vs 84px frames, 12/8/21px
 // render sizes genuinely differ) -- only the fallback-tracking state is
 // shared.
+//
+// Tracks *which* src failed rather than a plain boolean, so a new src is
+// derived as not-failed during render itself -- no effect/setState-on-prop-
+// change needed. Matters for SpotifyNowPlaying, whose AlbumArt instance
+// stays mounted across polls: without this, one track's 404 kept the
+// fallback showing forever, even once a later poll brought in a different
+// track with a working image.
 export function useImageFallback(src) {
-    const [failed, setFailed] = useState(false);
+    const [failedSrc, setFailedSrc] = useState(null);
     return {
-        showFallback: !src || failed,
-        onError: () => setFailed(true),
+        showFallback: !src || failedSrc === src,
+        onError: () => setFailedSrc(src),
     };
 }
