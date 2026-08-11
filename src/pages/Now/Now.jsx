@@ -5,6 +5,7 @@ import LetterboxdActivity from '../../components/LetterboxdActivity/LetterboxdAc
 import GoodreadsActivity from '../../components/GoodreadsActivity/GoodreadsActivity';
 import SpotifyTopTracks from '../../components/SpotifyTopTracks/SpotifyTopTracks';
 import SpotifyTopArtists from '../../components/SpotifyTopArtists/SpotifyTopArtists';
+import SpotifyNowPlaying from '../../components/SpotifyNowPlaying/SpotifyNowPlaying';
 import './Now.css';
 
 const elsewhere = [
@@ -26,6 +27,8 @@ function Now() {
             </header>
 
             <main className="page-stack">
+                <SpotifyNowPlaying />
+
                 <div className="now-row now-row-2col">
                     <RetroPanel title="Top songs last month">
                         <SpotifyTopTracks />

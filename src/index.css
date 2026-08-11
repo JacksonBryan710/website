@@ -144,6 +144,9 @@ a:visited {
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	color: var(--retro-accent);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .retro-crt-panel-body {

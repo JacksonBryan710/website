@@ -14,15 +14,10 @@
 
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
+import { getAccessToken, pickImage, errorMessage, type SpotifyImage } from "../_shared/spotify.ts";
 
 const LIMIT = 10;
 const TIME_RANGE = "short_term";
-
-type SpotifyImage = {
-  url: string;
-  height: number | null;
-  width: number | null;
-};
 
 // popularity/genres/images marked optional -- Spotify's docs imply they're
 // always present, but a live run showed a track missing popularity and an
@@ -44,27 +39,6 @@ type SpotifyArtist = {
   images?: SpotifyImage[];
   genres?: string[];
 };
-
-// Spotify returns images largest-first; the smallest is plenty for a
-// thumbnail in a numbered list, so take the last one rather than the first.
-function pickImage(images: SpotifyImage[] | undefined): string | null {
-  return images && images.length > 0 ? images[images.length - 1].url : null;
-}
-
-async function getAccessToken(clientId: string, clientSecret: string, refreshToken: string): Promise<string> {
-  const res = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: refreshToken }),
-  });
-  const body = await res.text();
-  if (!res.ok) throw new Error(`token exchange failed, status=${res.status}, body[0:200]=${body.slice(0, 200)}`);
-  const { access_token } = JSON.parse(body) as { access_token: string };
-  return access_token;
-}
 
 async function fetchTopItems<T>(accessToken: string, type: "tracks" | "artists"): Promise<T[]> {
   const url = `https://api.spotify.com/v1/me/top/${type}?time_range=${TIME_RANGE}&limit=${LIMIT}`;
@@ -159,7 +133,3 @@ export default {
     return Response.json({ ok: Object.keys(errors).length === 0, refreshed, errors });
   }),
 };
-
-function errorMessage(err: unknown): string {
-  return err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : String(err);
-}
