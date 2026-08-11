@@ -18,13 +18,17 @@
 
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
-import { getAccessToken, pickImage, type SpotifyImage } from "../_shared/spotify.ts";
+import { getAccessToken, pickImage, errorMessage, type SpotifyImage } from "../_shared/spotify.ts";
 
+// release_date marked optional (not just album/images) -- refresh-spotify-cache's
+// own comment documents Spotify omitting fields its docs mark required
+// (missing popularity, missing genres on a live run), so the same defensive
+// treatment applies here rather than trusting the declared schema.
 type SpotifyTrack = {
   name: string;
   duration_ms: number;
   external_urls: { spotify: string };
-  album: { name: string; release_date: string; images?: SpotifyImage[] };
+  album: { name: string; release_date?: string; images?: SpotifyImage[] };
   artists: { name: string }[];
 };
 
@@ -39,13 +43,57 @@ type RecentlyPlayedResponse = {
   items: { track: SpotifyTrack; played_at: string }[];
 };
 
-// Spotify's release_date can be a bare year ("1999"), year-month, or a full
-// date -- the year prefix is all any of those formats share.
-function releaseYear(releaseDate: string): string | null {
-  return releaseDate.slice(0, 4) || null;
+type TrackFields = {
+  title: string;
+  artist_names: string | null;
+  album: string;
+  release_year: string | null;
+  image_url: string | null;
+  external_url: string;
+  duration_ms: number;
+};
+
+// The row that's actually meaningful to build per state -- kept as a
+// discriminated union (rather than a loosely-typed Record<string, unknown>)
+// so a mismatch like fetchCurrentlyPlaying's old return type -- which
+// claimed a bare `{ progress_ms }` was possible where the real value was
+// always a full track plus progress_ms -- is caught at compile time instead
+// of only surfacing as a runtime bug.
+type NowPlayingRow =
+  | ({ state: "playing"; progress_ms: number | null } & TrackFields)
+  | ({ state: "recent"; played_at: string } & TrackFields)
+  | { state: "idle" };
+
+// Every column gets an explicit value on every upsert (nulled out when not
+// applicable to the current state) -- upsert's ON CONFLICT DO UPDATE only
+// touches columns present in the payload, so omitting e.g. `title` on an
+// idle row would leave the *previous* track's title lingering instead of
+// clearing it.
+const EMPTY_ROW_COLUMNS = {
+  title: null,
+  artist_names: null,
+  album: null,
+  release_year: null,
+  image_url: null,
+  external_url: null,
+  duration_ms: null,
+  progress_ms: null,
+  played_at: null,
+};
+
+function toRowColumns(row: NowPlayingRow) {
+  return { ...EMPTY_ROW_COLUMNS, ...row };
 }
 
-function trackRow(track: SpotifyTrack) {
+// Spotify's release_date can be a bare year ("1999"), year-month, or a full
+// date -- the year prefix is all any of those formats share. Falsy/missing
+// input (see the SpotifyTrack comment above) returns null rather than
+// throwing.
+function releaseYear(releaseDate: string | undefined): string | null {
+  return releaseDate ? releaseDate.slice(0, 4) : null;
+}
+
+function trackRow(track: SpotifyTrack): TrackFields {
   return {
     title: track.name,
     artist_names: track.artists.map((artist) => artist.name).join(", ") || null,
@@ -57,7 +105,11 @@ function trackRow(track: SpotifyTrack) {
   };
 }
 
-async function fetchCurrentlyPlaying(accessToken: string): Promise<SpotifyTrack | { progress_ms: number | null } | null> {
+// Return type is an intersection (always a full track plus progress_ms),
+// not a union with a bare `{ progress_ms }` shape -- the previous
+// annotation claimed a shape the code never actually produces, which would
+// have failed strict type-checking at the trackRow() call site below.
+async function fetchCurrentlyPlaying(accessToken: string): Promise<(SpotifyTrack & { progress_ms: number | null }) | null> {
   const res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -80,6 +132,12 @@ async function fetchLastPlayed(accessToken: string): Promise<{ track: SpotifyTra
   return items.length > 0 ? items[0] : null;
 }
 
+// Fixed, well-known id for the table's one-and-only row (see
+// 20260811070100_make_spotify_now_playing_singleton.sql, which seeds it and
+// switches the table to this upsert-in-place model instead of
+// delete-then-insert).
+const ROW_ID = "00000000-0000-0000-0000-000000000000";
+
 export default {
   fetch: withSupabase({ auth: ["secret"] }, async (_req, ctx) => {
     const clientId = Deno.env.get("SPOTIFY_CLIENT_ID");
@@ -91,43 +149,31 @@ export default {
       return Response.json({ ok: false, error: message }, { status: 500 });
     }
 
-    let row: Record<string, unknown>;
+    let row: NowPlayingRow;
 
     try {
       const accessToken = await getAccessToken(clientId, clientSecret, refreshToken);
       const playing = await fetchCurrentlyPlaying(accessToken);
 
       if (playing) {
-        row = {
-          state: "playing",
-          ...trackRow(playing),
-          progress_ms: playing.progress_ms,
-          is_playing: true,
-        };
+        row = { state: "playing", ...trackRow(playing), progress_ms: playing.progress_ms };
       } else {
         const last = await fetchLastPlayed(accessToken);
-        row = last
-          ? { state: "recent", ...trackRow(last.track), is_playing: false, played_at: last.played_at }
-          : { state: "idle", is_playing: false };
+        row = last ? { state: "recent", ...trackRow(last.track), played_at: last.played_at } : { state: "idle" };
       }
     } catch (err) {
       return Response.json({ ok: false, error: errorMessage(err) }, { status: 500 });
     }
 
-    // There's no scope key to delete-by like time_range/source elsewhere in
-    // this repo -- this table only ever holds one row, period. PostgREST
-    // rejects an unfiltered delete(), so `id is not null` stands in as an
-    // always-true filter that means "every row".
-    const { error: deleteError } = await ctx.supabaseAdmin.from("spotify_now_playing").delete().not("id", "is", null);
-    if (deleteError) return Response.json({ ok: false, error: errorMessage(deleteError) }, { status: 500 });
-
-    const { error: insertError } = await ctx.supabaseAdmin.from("spotify_now_playing").insert(row);
-    if (insertError) return Response.json({ ok: false, error: errorMessage(insertError) }, { status: 500 });
+    // Single upsert in place of the old delete()-then-insert() (two
+    // non-atomic round trips that left the table briefly empty every
+    // minute -- see the migration comment). A page load can no longer land
+    // on a genuinely-zero-row table once this has run at least once.
+    const { error: upsertError } = await ctx.supabaseAdmin
+      .from("spotify_now_playing")
+      .upsert({ id: ROW_ID, fetched_at: new Date().toISOString(), ...toRowColumns(row) }, { onConflict: "id" });
+    if (upsertError) return Response.json({ ok: false, error: errorMessage(upsertError) }, { status: 500 });
 
     return Response.json({ ok: true, state: row.state });
   }),
 };
-
-function errorMessage(err: unknown): string {
-  return err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : String(err);
-}
