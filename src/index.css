@@ -17,18 +17,35 @@
 }
 
 html {
-	background: url("/src/assets/backgrounds/metal004_light.jpg");
-	background-attachment: fixed;
 	overscroll-behavior-y: none;
 }
 
 body {
-	background: url("/src/assets/backgrounds/metal004_light.jpg");
-	background-attachment: fixed;
 	color: var(--retro-ink);
 	margin: 0;
 	overscroll-behavior-y: none;
 }
+
+/* background-attachment: fixed is a no-op on iOS Safari, so the locked
+   background is a genuinely fixed layer instead. Oversized past the
+   viewport edges to stay covered through any residual rubber-band bounce
+   on browsers that don't fully honor overscroll-behavior. */
+
+body::before {
+	content: "";
+	position: fixed;
+	
+	/* 1. Remove height and use inset to bleed 20% past the top and bottom */
+	inset: -20vh 0; 
+	
+	background: url("/src/assets/backgrounds/metal004_light.jpg");
+	z-index: -1;
+	
+	/* 2. Forces iOS to use hardware rendering, preventing scroll stutter */
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
+}
+
 
 a {
 	color: var(--retro-accent);
