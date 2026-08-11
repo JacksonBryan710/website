@@ -14,7 +14,7 @@
 
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
-import { getAccessToken, pickImage, type SpotifyImage } from "../_shared/spotify.ts";
+import { getAccessToken, pickImage, errorMessage, type SpotifyImage } from "../_shared/spotify.ts";
 
 const LIMIT = 10;
 const TIME_RANGE = "short_term";
@@ -133,7 +133,3 @@ export default {
     return Response.json({ ok: Object.keys(errors).length === 0, refreshed, errors });
   }),
 };
-
-function errorMessage(err: unknown): string {
-  return err && typeof err === "object" && "message" in err ? String((err as { message: unknown }).message) : String(err);
-}
