@@ -1,0 +1,202 @@
+@keyframes spotify-now-playing-eq1 { 0%, 100% { height: 20%; } 50% { height: 90%; } }
+@keyframes spotify-now-playing-eq2 { 0%, 100% { height: 60%; } 50% { height: 15%; } }
+@keyframes spotify-now-playing-eq3 { 0%, 100% { height: 35%; } 50% { height: 100%; } }
+@keyframes spotify-now-playing-eq4 { 0%, 100% { height: 80%; } 50% { height: 30%; } }
+@keyframes spotify-now-playing-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.spotify-now-playing-status {
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+}
+
+.spotify-now-playing-status-live {
+    color: var(--retro-accent-2);
+    animation: spotify-now-playing-blink 1.4s steps(1) infinite;
+}
+
+.spotify-now-playing-status-recent,
+.spotify-now-playing-status-idle {
+    color: #6a7fb0;
+}
+
+.spotify-now-playing-row {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+}
+
+.spotify-now-playing-art-frame,
+.spotify-now-playing-art-fallback {
+    width: 84px;
+    height: 84px;
+    flex-shrink: 0;
+    border: 2px solid;
+    border-color: #6a6a6a #fff #fff #6a6a6a;
+    overflow: hidden;
+}
+
+.spotify-now-playing-art-frame {
+    display: block;
+    background: #000;
+}
+
+.spotify-now-playing-art-frame.is-muted {
+    filter: grayscale(0.6) brightness(0.7);
+}
+
+.spotify-now-playing-art-fallback {
+    background: var(--retro-crt-header);
+}
+
+/* Same pixelation trick as SpotifyTopList's thumbnails: render the image
+   small, then scale it back up to fill the frame, forcing a blocky upscale
+   instead of the browser's smoother default interpolation. */
+.spotify-now-playing-art {
+    display: block;
+    width: 21px;
+    height: 21px;
+    object-fit: cover;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: pixelated;
+    transform: scale(4);
+    transform-origin: top left;
+}
+
+.spotify-now-playing-info {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-top: 0.1rem;
+}
+
+.spotify-now-playing-title,
+.spotify-now-playing-artist,
+.spotify-now-playing-album {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-now-playing-title {
+    font-size: 1.5rem;
+    color: var(--retro-ink);
+    text-shadow: 1px 1px 0 #000;
+}
+
+.spotify-now-playing-title.is-muted {
+    color: #9a9a9a;
+}
+
+.spotify-now-playing-artist {
+    font-size: 1.15rem;
+    color: var(--retro-accent-3);
+}
+
+.spotify-now-playing-artist.is-muted {
+    color: #6a9db0;
+}
+
+.spotify-now-playing-album {
+    font-size: 0.95rem;
+    color: #b9dede;
+}
+
+.spotify-now-playing-eq {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+    flex-shrink: 0;
+    padding-bottom: 2px;
+}
+
+.spotify-now-playing-eq-bar {
+    width: 5px;
+    background: #555;
+    height: 30%;
+}
+
+.spotify-now-playing-eq.is-live .spotify-now-playing-eq-bar:nth-child(1) {
+    background: var(--retro-accent);
+    animation: spotify-now-playing-eq1 0.9s ease-in-out infinite;
+}
+
+.spotify-now-playing-eq.is-live .spotify-now-playing-eq-bar:nth-child(2) {
+    background: var(--retro-accent-4);
+    animation: spotify-now-playing-eq2 0.7s ease-in-out infinite;
+}
+
+.spotify-now-playing-eq.is-live .spotify-now-playing-eq-bar:nth-child(3) {
+    background: var(--retro-accent-2);
+    animation: spotify-now-playing-eq3 1.1s ease-in-out infinite;
+}
+
+.spotify-now-playing-eq.is-live .spotify-now-playing-eq-bar:nth-child(4) {
+    background: var(--retro-accent-5);
+    animation: spotify-now-playing-eq4 0.8s ease-in-out infinite;
+}
+
+.spotify-now-playing-progress {
+    margin-top: 1rem;
+}
+
+.spotify-now-playing-progress-track {
+    height: 12px;
+    background: var(--retro-crt-header);
+    border: 1px solid;
+    border-color: #6a6a6a #fff #fff #6a6a6a;
+    padding: 1px;
+    box-sizing: border-box;
+}
+
+.spotify-now-playing-progress-fill {
+    height: 100%;
+    background: repeating-linear-gradient(90deg, var(--retro-accent) 0 6px, #2ecc10 6px 8px);
+}
+
+.spotify-now-playing-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    color: var(--retro-neutral);
+}
+
+.spotify-now-playing-last-played {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1.05rem;
+    color: #6a7fb0;
+}
+
+.spotify-now-playing-actions {
+    margin-top: 1rem;
+    padding-top: 0.9rem;
+    box-shadow: 0 -1px 0 #3a3a6a;
+    display: flex;
+    justify-content: center;
+}
+
+.spotify-now-playing-idle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.9rem;
+    padding: 0.75rem 0;
+}
+
+.spotify-now-playing-idle-title {
+    font-size: 1.6rem;
+    color: var(--retro-neutral);
+    text-shadow: 1px 1px 0 #000;
+    margin: 0;
+}
+
+.spotify-now-playing-idle-subtitle {
+    font-size: 1.05rem;
+    color: #6a7fb0;
+    margin: 0.35rem 0 0;
+}
