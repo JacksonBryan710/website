@@ -154,6 +154,17 @@ a:visited {
 	padding: 1.5rem;
 }
 
+/* The panel's own padding is the spacing between the title bar and the
+   content — content shouldn't add more on top of it via its own margins
+   (e.g. default <p> margins, or a list's margin-top). */
+.retro-crt-panel-body > *:first-child {
+	margin-top: 0;
+}
+
+.retro-crt-panel-body > *:last-child {
+	margin-bottom: 0;
+}
+
 /* Shared sunken legend-box chrome, reused by Frequency/MuscleSplit/
    DurationTrend. Each widget's own CSS still supplies inner layout (flex vs
    grid, gap) and spacing (padding, margin-top), since those vary. */
