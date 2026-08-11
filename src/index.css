@@ -36,8 +36,7 @@ body::before {
 	position: fixed;
 	
 	/* 1. Remove height and use inset to bleed 20% past the top and bottom */
-	inset: -20vh 0; 
-	
+	inset: -20vh 0;
 	background: url("/src/assets/backgrounds/metal004_light.jpg");
 	z-index: -1;
 	

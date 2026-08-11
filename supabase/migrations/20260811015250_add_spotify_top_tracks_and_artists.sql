@@ -1,5 +1,6 @@
--- Two ranked-snapshot tables backing the Now page's "Top songs this month" /
--- "Top artists this month" widgets, refreshed daily by the
+-- Two ranked-snapshot tables backing the Now page's "Top songs last month" /
+-- "Top artists last month" widgets, refreshed monthly (see
+-- 20260811022814_reschedule_refresh_spotify_cache_monthly.sql) by the
 -- refresh-spotify-cache Edge Function from Spotify's /me/top/{type} endpoint
 -- (time_range=short_term, Spotify's own "~last 4 weeks" window -- Spotify
 -- has no calendar-month concept, so this is what "this month" means here).
