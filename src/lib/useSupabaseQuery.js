@@ -11,6 +11,13 @@ export function useSupabaseQuery(queryFn, deps) {
 
     useEffect(() => {
         let cancelled = false;
+        // Clears a stale error from a previous run of this effect -- a no-op
+        // for callers whose deps never change (error already starts false),
+        // but load-bearing for a caller that polls (changing deps on an
+        // interval, e.g. SpotifyNowPlaying): without this, one transient
+        // failure left `error` stuck true forever, even once later polls
+        // succeed, since nothing ever set it back to false.
+        setError(false);
 
         queryFn(supabase)
             .then(({ data, error: fetchError }) => {
