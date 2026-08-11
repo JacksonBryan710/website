@@ -6,3 +6,25 @@
     flex-wrap: wrap;
     gap: 0.75rem;
 }
+
+.now-row {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* Grid items default to min-width: auto, which refuses to shrink below the
+   content's natural (unwrapped) width -- without this, a long nowrap title
+   forces its column wider than the track, overflowing the page. */
+.now-row > * {
+    min-width: 0;
+}
+
+.now-row-2col {
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 640px) {
+    .now-row-2col {
+        grid-template-columns: 1fr;
+    }
+}
