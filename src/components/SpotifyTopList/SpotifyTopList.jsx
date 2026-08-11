@@ -1,16 +1,11 @@
-import { useState } from 'react';
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
+import { useImageFallback } from '../../lib/useImageFallback';
 import QueryStatus from '../QueryStatus/QueryStatus';
 import './SpotifyTopList.css';
 
 const TIME_RANGE = 'short_term';
 const FRAME_SIZE = 48;
 
-// A row's image_url can be null (Spotify has none) or point at a CDN URL
-// that later 404s -- either way, fall back to a plain placeholder block
-// instead of a broken-image icon. First component in this repo rendering
-// <img>, so there's no existing fallback pattern to reuse.
-//
 // thumbPixelSize controls the pixelation strength: the image is rendered at
 // this size, then scaled back up to fill the 48px frame, forcing a blocky
 // upscale. Spotify serves artist photos at a much higher native resolution
@@ -18,9 +13,9 @@ const FRAME_SIZE = 48;
 // noticeably less pixelated for artists -- callers pick a smaller value to
 // compensate.
 function Thumbnail({ src, alt, thumbPixelSize }) {
-    const [failed, setFailed] = useState(false);
+    const { showFallback, onError } = useImageFallback(src);
 
-    if (!src || failed) {
+    if (showFallback) {
         return <div className="spotify-top-list-thumb-fallback" aria-hidden="true" />;
     }
 
@@ -30,7 +25,7 @@ function Thumbnail({ src, alt, thumbPixelSize }) {
                 className="spotify-top-list-thumb"
                 src={src}
                 alt={alt}
-                onError={() => setFailed(true)}
+                onError={onError}
                 style={{
                     width: thumbPixelSize,
                     height: thumbPixelSize,
