@@ -10,7 +10,7 @@ import './SpotifyNowPlaying.css';
 // row would otherwise be fetched once on mount and never again, freezing
 // the widget at whatever was playing on page load) and also self-heals
 // within one interval from any transient bad read.
-const REFRESH_INTERVAL_MS = 60_000;
+const REFRESH_INTERVAL_MS = 10_000;
 
 const STATUS_BY_STATE = {
     playing: { label: '● LIVE', className: 'spotify-now-playing-status-live' },
