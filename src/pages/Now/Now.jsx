@@ -1,7 +1,10 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import LetterboxdActivity from '../../components/LetterboxdActivity/LetterboxdActivity';
 import GoodreadsActivity from '../../components/GoodreadsActivity/GoodreadsActivity';
+import SpotifyTopTracks from '../../components/SpotifyTopTracks/SpotifyTopTracks';
+import SpotifyTopArtists from '../../components/SpotifyTopArtists/SpotifyTopArtists';
 import './Now.css';
 
 const elsewhere = [
@@ -13,40 +16,43 @@ const elsewhere = [
 ];
 
 function Now() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: Now';
-    }, []);
+    useDocumentTitle('Jackson Bryan: Now');
 
     return (
-        <div id="now-page" className="page">
+        <div id="now-page" className="page page-stack">
             <header>
                 <h1 className="page-title">Now</h1>
-                <p className="now-subtitle">What I've been into lately &mdash; updated whenever I remember to.</p>
+                <p className="page-subtitle">What I've been into lately &mdash; updated whenever I remember to.</p>
             </header>
 
-            <main>
-                <section className="retro-box">
-                    <h2>Recently watched</h2>
+            <main className="page-stack">
+                <div className="now-row now-row-2col">
+                    <RetroPanel title="Top songs last month">
+                        <SpotifyTopTracks />
+                    </RetroPanel>
+
+                    <RetroPanel title="Top artists last month">
+                        <SpotifyTopArtists />
+                    </RetroPanel>
+                </div>
+
+                <RetroPanel title="Recently watched">
                     <LetterboxdActivity />
-                </section>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>Favorite films</h2>
-                    <p className="now-note">// top 4 coming soon</p>
-                </section>
+                <RetroPanel title="Favorite films">
+                    <p className="status-note">// top 4 coming soon</p>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>Currently reading</h2>
+                <RetroPanel title="Currently reading">
                     <GoodreadsActivity shelf="currently-reading" emptyLabel="Not reading anything at the moment." />
-                </section>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>Recently read</h2>
+                <RetroPanel title="Recently read">
                     <GoodreadsActivity shelf="read" />
-                </section>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>From the source</h2>
+                <RetroPanel title="From the source">
                     <p>Follow along with what I'm watching, reading, listening to, and my training:</p>
                     <ul className="badge-list">
                         {elsewhere.map((item) => (
@@ -63,7 +69,7 @@ function Now() {
                             </li>
                         ))}
                     </ul>
-                </section>
+                </RetroPanel>
             </main>
         </div>
     );

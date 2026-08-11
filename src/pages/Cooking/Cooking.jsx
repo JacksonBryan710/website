@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import './Cooking.css';
 
 function Cooking() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: Cooking';
-    }, []);
+    useDocumentTitle('Jackson Bryan: Cooking');
 
     const { data: recipes, error } = useSupabaseQuery(
         (supabase) => supabase.from('recipes').select('*').order('sort_order', { ascending: true }),
@@ -23,7 +22,7 @@ function Cooking() {
                 {!error && !recipes && <p className="status-note">Loading recipes&hellip;</p>}
 
                 {recipes && (
-                    <div className="retro-box">
+                    <RetroPanel title="Recipes">
                         <table id="recipes">
                             <thead>
                                 <tr>
@@ -49,7 +48,7 @@ function Cooking() {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </RetroPanel>
                 )}
             </main>
         </div>

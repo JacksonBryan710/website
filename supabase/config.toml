@@ -437,3 +437,9 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/sync-hevy-history/deno.json"
 entrypoint = "./functions/sync-hevy-history/index.ts"
+
+[functions.refresh-spotify-cache]
+enabled = true
+verify_jwt = false
+import_map = "./functions/refresh-spotify-cache/deno.json"
+entrypoint = "./functions/refresh-spotify-cache/index.ts"

@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import './About.css';
 
 function About() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: About';
-    }, []);
+    useDocumentTitle('Jackson Bryan: About');
 
     return (
         <div id="about-page" className="page">
@@ -14,7 +13,7 @@ function About() {
             </header>
 
             <main>
-                <div className="retro-box">
+                <RetroPanel title="Bio">
                     <p>
                         Hi, I'm Jackson &mdash; I'm currently based in New York City working in fintech, where I
                         support an electronic trading platform serving institutional credit market participants
@@ -36,7 +35,7 @@ function About() {
                         For more of what I'm currently into, check the <Link to="/now">Now page</Link> &mdash; and{' '}
                         <Link to="/projects">Projects</Link> for what I'm building.
                     </p>
-                </div>
+                </RetroPanel>
             </main>
         </div>
     );

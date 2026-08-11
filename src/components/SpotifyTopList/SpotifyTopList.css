@@ -1,0 +1,78 @@
+.spotify-top-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.spotify-top-list-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.spotify-top-list-rank {
+    font-family: var(--retro-font-display);
+    font-size: 1.3rem;
+    color: var(--retro-accent);
+    width: 1.5rem;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.spotify-top-list-thumb-frame,
+.spotify-top-list-thumb-fallback {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: 2px solid;
+    border-color: #6a6a6a #fff #fff #6a6a6a;
+    overflow: hidden;
+}
+
+.spotify-top-list-thumb-frame {
+    display: block;
+}
+
+/* Rendered small (size set inline per-instance via thumbPixelSize, since
+   tracks and artists need different values) then scaled back up to fill
+   the 48px frame -- forcing the upscale, rather than relying on the
+   browser's downscale interpolation alone, is what makes the pixelation
+   read as chunky blocks instead of a barely-there texture. */
+.spotify-top-list-thumb {
+    /* Without this, <img>'s default inline display subjects it to
+       baseline/line-height alignment -- a small gap that the scale
+       transform below then magnifies into a visible offset. */
+    display: block;
+    object-fit: cover;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: pixelated;
+    transform-origin: top left;
+}
+
+.spotify-top-list-thumb-fallback {
+    background: var(--retro-crt-header);
+}
+
+.spotify-top-list-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.spotify-top-list-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotify-top-list-subtitle {
+    font-size: 0.9rem;
+    color: #b9dede;
+    font-family: var(--retro-font-display);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

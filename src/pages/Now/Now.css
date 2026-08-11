@@ -1,32 +1,3 @@
-#now-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-#now-page header .page-title {
-    margin-bottom: 0.25rem;
-}
-
-.now-subtitle {
-    text-align: center;
-    font-style: italic;
-    opacity: 0.85;
-    margin-top: 0;
-}
-
-#now-page section h2 {
-    font-family: var(--retro-font-display);
-    font-size: 1.6rem;
-    letter-spacing: 0.03em;
-    color: var(--retro-accent-2);
-    margin-top: 0;
-}
-
-#now-page section p {
-    line-height: 1.6;
-}
-
 .badge-list {
     list-style: none;
     margin: 1rem 0;
@@ -36,13 +7,24 @@
     gap: 0.75rem;
 }
 
-.badge-link-disabled {
-    opacity: 0.5;
-    cursor: default;
+.now-row {
+    display: grid;
+    gap: 1.5rem;
 }
 
-.now-note {
-    font-size: 0.9rem;
-    opacity: 0.75;
-    margin-bottom: 0;
+/* Grid items default to min-width: auto, which refuses to shrink below the
+   content's natural (unwrapped) width -- without this, a long nowrap title
+   forces its column wider than the track, overflowing the page. */
+.now-row > * {
+    min-width: 0;
+}
+
+.now-row-2col {
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 640px) {
+    .now-row-2col {
+        grid-template-columns: 1fr;
+    }
 }

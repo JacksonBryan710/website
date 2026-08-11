@@ -17,18 +17,34 @@
 }
 
 html {
-	background: url("/src/assets/backgrounds/metal004_light.jpg");
-	background-attachment: fixed;
 	overscroll-behavior-y: none;
 }
 
 body {
-	background: url("/src/assets/backgrounds/metal004_light.jpg");
-	background-attachment: fixed;
 	color: var(--retro-ink);
 	margin: 0;
 	overscroll-behavior-y: none;
 }
+
+/* background-attachment: fixed is a no-op on iOS Safari, so the locked
+   background is a genuinely fixed layer instead. Oversized past the
+   viewport edges to stay covered through any residual rubber-band bounce
+   on browsers that don't fully honor overscroll-behavior. */
+
+body::before {
+	content: "";
+	position: fixed;
+	
+	/* 1. Remove height and use inset to bleed 20% past the top and bottom */
+	inset: -20vh 0;
+	background: url("/src/assets/backgrounds/metal004_light.jpg");
+	z-index: -1;
+	
+	/* 2. Forces iOS to use hardware rendering, preventing scroll stutter */
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
+}
+
 
 a {
 	color: var(--retro-accent);
@@ -100,8 +116,8 @@ a:visited {
 	margin-bottom: 1.5rem;
 }
 
-/* Nested "sunken CRT" double-bevel panel, for data-dense widgets (Training
-   page). Sits inside a .retro-box, not a replacement for it. */
+/* "Sunken CRT" double-bevel panel with title bar, used site-wide as the
+   default content block (via the RetroPanel component). */
 .retro-crt-panel {
 	border: 2px solid;
 	border-color: #e8e8e8 #000 #000 #e8e8e8;
@@ -137,6 +153,21 @@ a:visited {
 	padding: 1.5rem;
 }
 
+/* The panel's own padding is the spacing between the title bar and the
+   content — content shouldn't add more on top of it via its own margins
+   (e.g. default <p> margins, or a list's margin-top). */
+.retro-crt-panel-body > *:first-child {
+	margin-top: 0;
+}
+
+.retro-crt-panel-body > *:last-child {
+	margin-bottom: 0;
+}
+
+.retro-crt-panel-body p {
+	line-height: 1.6;
+}
+
 /* Shared sunken legend-box chrome, reused by Frequency/MuscleSplit/
    DurationTrend. Each widget's own CSS still supplies inner layout (flex vs
    grid, gap) and spacing (padding, margin-top), since those vary. */
@@ -144,4 +175,40 @@ a:visited {
 	background: var(--retro-crt-header);
 	border: 1px solid;
 	border-color: #6a6a6a #fff #fff #6a6a6a;
+}
+
+/* One label-per-row legend line (swatch + text), reused by MuscleSplit and
+   DurationTrend. Frequency's legend is a different shape (one row of
+   swatches across a scale) and keeps its own markup. */
+.retro-crt-legend-row {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-size: 0.85rem;
+	font-family: var(--retro-font-display);
+}
+
+.retro-crt-legend-swatch {
+	width: 9px;
+	height: 9px;
+	display: inline-block;
+}
+
+/* Shared page shell: a flex column with consistent gaps, used by every page
+   for both the outer .page container and its <main>. */
+.page-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.page-subtitle {
+	text-align: center;
+	font-style: italic;
+	opacity: 0.85;
+	margin-top: 0;
+}
+
+.page-title:has(+ .page-subtitle) {
+	margin-bottom: 0.25rem;
 }

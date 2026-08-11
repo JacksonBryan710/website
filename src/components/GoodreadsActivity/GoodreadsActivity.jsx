@@ -1,49 +1,23 @@
-import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import './GoodreadsActivity.css';
+import FeedActivity from '../FeedActivity/FeedActivity';
 
 function GoodreadsActivity({ shelf = 'read', emptyLabel = 'No recent shelf entries.' }) {
-    const { data, error } = useSupabaseQuery(
-        (supabase) =>
-            supabase
-                .from('feed_cache')
-                .select('*')
-                .eq('source', 'goodreads')
-                .eq('feed_key', shelf)
-                .order('sort_order', { ascending: true }),
-        [shelf],
-    );
-    const books = data?.map((row) => ({
-        key: row.id,
-        title: row.title,
-        author: row.subtitle,
-        rating: row.rating,
-        link: row.link,
-    }));
-
-    if (error) {
-        return <p className="now-note">Couldn't load recent Goodreads activity right now.</p>;
-    }
-
-    if (!books) {
-        return <p className="now-note">Loading recent books&hellip;</p>;
-    }
-
-    if (books.length === 0) {
-        return <p className="now-note">{emptyLabel}</p>;
-    }
-
     return (
-        <ul className="goodreads-shelf">
-            {books.map((book) => (
-                <li key={book.key}>
-                    <a href={book.link} target="_blank" rel="noopener noreferrer">
-                        {book.title}
+        <FeedActivity
+            source="goodreads"
+            feedKey={shelf}
+            errorLabel="Couldn't load recent Goodreads activity right now."
+            loadingLabel="Loading recent books…"
+            emptyLabel={emptyLabel}
+            renderItem={(row) => (
+                <>
+                    <a href={row.link} target="_blank" rel="noopener noreferrer">
+                        {row.title}
                     </a>
-                    {book.author && <span> by {book.author}</span>}
-                    {book.rating !== null && <span className="goodreads-rating"> &mdash; {book.rating}/5</span>}
-                </li>
-            ))}
-        </ul>
+                    {row.subtitle && <span> by {row.subtitle}</span>}
+                    {row.rating !== null && <span className="feed-activity-rating"> &mdash; {row.rating}/5</span>}
+                </>
+            )}
+        />
     );
 }
 
