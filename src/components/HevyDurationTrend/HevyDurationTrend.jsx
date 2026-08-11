@@ -1,5 +1,6 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
+import QueryStatus from '../QueryStatus/QueryStatus';
 import './HevyDurationTrend.css';
 
 const SESSIONS_PER_ROUTINE = 6;
@@ -90,94 +91,93 @@ function HevyDurationTrend() {
         [],
     );
 
-    let body;
-    if (error) {
-        body = <p className="status-note">Couldn't load duration trend right now.</p>;
-    } else if (!data) {
-        body = <p className="status-note">Loading&hellip;</p>;
-    } else {
-        const routines = groupRoutines(data).filter((r) => r.minutes.length > 0);
-        if (routines.length === 0) {
-            body = <p className="status-note">No completed sessions with a recorded duration yet.</p>;
-        } else {
-            const maxN = Math.max(...routines.map((r) => r.minutes.length));
-            const xStep = maxN > 1 ? (CHART_W - PAD * 2) / (maxN - 1) : 0;
-            const allMinutes = routines.flatMap((r) => r.minutes);
-            const dataMin = Math.min(...allMinutes);
-            const dataMax = Math.max(...allMinutes);
-            const margin = (dataMax - dataMin) * 0.2 || 5;
-            const yMin = dataMin - margin;
-            const yMax = dataMax + margin;
-            const yScale = (CHART_H - PAD * 2) / (yMax - yMin);
-            const toXY = (i, v) => ({ x: PAD + i * xStep, y: CHART_H - PAD - (v - yMin) * yScale });
+    return (
+        <RetroPanel title="Duration">
+            <QueryStatus error={error} data={data} errorLabel="Couldn't load duration trend right now.">
+                {(rows) => {
+                    const routines = groupRoutines(rows).filter((r) => r.minutes.length > 0);
+                    if (routines.length === 0) {
+                        return <p className="status-note">No completed sessions with a recorded duration yet.</p>;
+                    }
 
-            const lines = routines.map((r) => {
-                // Right-align: a routine with fewer than maxN sessions still
-                // ends at the rightmost "most recent" tick, it just starts
-                // later, rather than being left-aligned and falling short of
-                // "most recent".
-                const offset = maxN - r.minutes.length;
-                const points = r.minutes.map((v, i) => ({ ...toXY(i + offset, v), v }));
-                const avgMin = Math.round(r.minutes.reduce((a, b) => a + b, 0) / r.minutes.length);
-                return { ...r, points, avgMin };
-            });
-            const gridLines = Array.from({ length: GRID_STEPS + 1 }, (_, k) => ({
-                y: PAD + (k * (CHART_H - PAD * 2)) / GRID_STEPS,
-            }));
-            const xTicks = Array.from({ length: maxN }, (_, i) => ({ x: PAD + i * xStep }));
-            const totalSessions = routines.reduce((sum, r) => sum + r.minutes.length, 0);
+                    const maxN = Math.max(...routines.map((r) => r.minutes.length));
+                    const xStep = maxN > 1 ? (CHART_W - PAD * 2) / (maxN - 1) : 0;
+                    const allMinutes = routines.flatMap((r) => r.minutes);
+                    const dataMin = Math.min(...allMinutes);
+                    const dataMax = Math.max(...allMinutes);
+                    const margin = (dataMax - dataMin) * 0.2 || 5;
+                    const yMin = dataMin - margin;
+                    const yMax = dataMax + margin;
+                    const yScale = (CHART_H - PAD * 2) / (yMax - yMin);
+                    const toXY = (i, v) => ({ x: PAD + i * xStep, y: CHART_H - PAD - (v - yMin) * yScale });
 
-            body = (
-                <div className="hevy-duration-trend">
-                    <p className="hevy-duration-trend-caption">
-                        session duration trend per routine, last {SESSIONS_PER_ROUTINE} sessions
-                    </p>
-                    <svg
-                        viewBox={`0 0 ${CHART_W} ${CHART_H}`}
-                        width="100%"
-                        height={CHART_H}
-                        className="hevy-duration-trend-svg"
-                    >
-                        {gridLines.map((g, i) => (
-                            <line key={i} x1={PAD} y1={g.y} x2={CHART_W - PAD} y2={g.y} stroke="rgba(80,220,220,.25)" strokeWidth="1" />
-                        ))}
-                        {xTicks.map((t, i) => (
-                            <line key={i} x1={t.x} y1={PAD} x2={t.x} y2={CHART_H - PAD} stroke="rgba(80,220,220,.15)" strokeWidth="1" />
-                        ))}
-                        {lines.map((r) => (
-                            <polyline
-                                key={r.key}
-                                points={r.points.map((p) => `${p.x},${p.y}`).join(' ')}
-                                fill="none"
-                                style={{ stroke: r.color }}
-                                strokeWidth="2.5"
-                            />
-                        ))}
-                        {lines.flatMap((r) =>
-                            r.points.map((p, i) => (
-                                <circle key={`${r.key}-${i}`} cx={p.x} cy={p.y} r="3.5" style={{ fill: r.color }} />
-                            )),
-                        )}
-                    </svg>
-                    <div className="hevy-duration-trend-range">
-                        <span>{SESSIONS_PER_ROUTINE} sessions ago</span>
-                        <span>most recent</span>
-                    </div>
-                    <div className="retro-crt-legend hevy-duration-trend-legend">
-                        {[...lines].sort(byLegendOrder).map((r) => (
-                            <div key={r.key} className="hevy-duration-trend-legend-row">
-                                <span className="hevy-duration-trend-swatch" style={{ background: r.color }} />
-                                {r.name} &mdash; {r.avgMin} min avg
+                    const lines = routines.map((r) => {
+                        // Right-align: a routine with fewer than maxN sessions still
+                        // ends at the rightmost "most recent" tick, it just starts
+                        // later, rather than being left-aligned and falling short of
+                        // "most recent".
+                        const offset = maxN - r.minutes.length;
+                        const points = r.minutes.map((v, i) => ({ ...toXY(i + offset, v), v }));
+                        const avgMin = Math.round(r.minutes.reduce((a, b) => a + b, 0) / r.minutes.length);
+                        return { ...r, points, avgMin };
+                    });
+                    const gridLines = Array.from({ length: GRID_STEPS + 1 }, (_, k) => ({
+                        y: PAD + (k * (CHART_H - PAD * 2)) / GRID_STEPS,
+                    }));
+                    const xTicks = Array.from({ length: maxN }, (_, i) => ({ x: PAD + i * xStep }));
+                    const totalSessions = routines.reduce((sum, r) => sum + r.minutes.length, 0);
+
+                    return (
+                        <div className="hevy-duration-trend">
+                            <p className="hevy-duration-trend-caption">
+                                session duration trend per routine, last {SESSIONS_PER_ROUTINE} sessions
+                            </p>
+                            <svg
+                                viewBox={`0 0 ${CHART_W} ${CHART_H}`}
+                                width="100%"
+                                height={CHART_H}
+                                className="hevy-duration-trend-svg"
+                            >
+                                {gridLines.map((g, i) => (
+                                    <line key={i} x1={PAD} y1={g.y} x2={CHART_W - PAD} y2={g.y} stroke="rgba(80,220,220,.25)" strokeWidth="1" />
+                                ))}
+                                {xTicks.map((t, i) => (
+                                    <line key={i} x1={t.x} y1={PAD} x2={t.x} y2={CHART_H - PAD} stroke="rgba(80,220,220,.15)" strokeWidth="1" />
+                                ))}
+                                {lines.map((r) => (
+                                    <polyline
+                                        key={r.key}
+                                        points={r.points.map((p) => `${p.x},${p.y}`).join(' ')}
+                                        fill="none"
+                                        style={{ stroke: r.color }}
+                                        strokeWidth="2.5"
+                                    />
+                                ))}
+                                {lines.flatMap((r) =>
+                                    r.points.map((p, i) => (
+                                        <circle key={`${r.key}-${i}`} cx={p.x} cy={p.y} r="3.5" style={{ fill: r.color }} />
+                                    )),
+                                )}
+                            </svg>
+                            <div className="hevy-duration-trend-range">
+                                <span>{SESSIONS_PER_ROUTINE} sessions ago</span>
+                                <span>most recent</span>
                             </div>
-                        ))}
-                    </div>
-                    <div className="hevy-duration-trend-total">based on {totalSessions} logged sessions</div>
-                </div>
-            );
-        }
-    }
-
-    return <HevyPanel title="Duration">{body}</HevyPanel>;
+                            <div className="retro-crt-legend hevy-duration-trend-legend">
+                                {[...lines].sort(byLegendOrder).map((r) => (
+                                    <div key={r.key} className="retro-crt-legend-row">
+                                        <span className="retro-crt-legend-swatch" style={{ background: r.color }} />
+                                        {r.name} &mdash; {r.avgMin} min avg
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="hevy-duration-trend-total">based on {totalSessions} logged sessions</div>
+                        </div>
+                    );
+                }}
+            </QueryStatus>
+        </RetroPanel>
+    );
 }
 
 export default HevyDurationTrend;

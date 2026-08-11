@@ -1,8 +1,7 @@
-// Shared "sunken CRT" chrome for every Training-page widget (double-bevel
-// panel + header bar), so the six Hevy widgets don't each re-implement the
-// same four-level nested markup. Purely presentational — styles come from
-// the .retro-crt-panel* classes in index.css.
-function HevyPanel({ title, children }) {
+// Shared "sunken CRT" chrome (double-bevel panel + header bar) used for every
+// content block site-wide, not just Training's Hevy widgets. Purely
+// presentational — styles come from the .retro-crt-panel* classes in index.css.
+function RetroPanel({ title, children }) {
     return (
         <div className="retro-crt-panel">
             <div className="retro-crt-panel-inner">
@@ -15,4 +14,4 @@ function HevyPanel({ title, children }) {
     );
 }
 
-export default HevyPanel;
+export default RetroPanel;

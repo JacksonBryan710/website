@@ -1,17 +1,17 @@
-.letterboxd-diary {
+.feed-activity-list {
     list-style: none;
-    margin: 1rem 0 0;
+    margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
 }
 
-.letterboxd-diary li {
+.feed-activity-list li {
     line-height: 1.4;
 }
 
-.letterboxd-rating {
+.feed-activity-rating {
     color: var(--retro-accent);
     font-family: var(--retro-font-display);
     font-size: 1.1rem;

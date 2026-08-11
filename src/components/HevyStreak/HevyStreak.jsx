@@ -1,5 +1,6 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
+import QueryStatus from '../QueryStatus/QueryStatus';
 import './HevyStreak.css';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -36,26 +37,26 @@ function HevyStreak() {
         [],
     );
 
-    let body;
-    if (error) {
-        body = <p className="status-note">Couldn't load streak right now.</p>;
-    } else if (!data) {
-        body = <p className="status-note">Loading&hellip;</p>;
-    } else if (data.length === 0) {
-        body = <p className="status-note">No workouts logged yet.</p>;
-    } else {
-        const { current, best } = computeStreaks(data);
-        body = (
-            <div className="hevy-streak">
-                <div className="hevy-streak-current">
-                    {current} <span>days</span>
-                </div>
-                <div className="hevy-streak-best">personal best: {best} days</div>
-            </div>
-        );
-    }
-
-    return <HevyPanel title="Streak">{body}</HevyPanel>;
+    return (
+        <RetroPanel title="Streak">
+            <QueryStatus error={error} data={data} errorLabel="Couldn't load streak right now.">
+                {(rows) => {
+                    if (rows.length === 0) {
+                        return <p className="status-note">No workouts logged yet.</p>;
+                    }
+                    const { current, best } = computeStreaks(rows);
+                    return (
+                        <div className="hevy-streak">
+                            <div className="hevy-streak-current">
+                                {current} <span>days</span>
+                            </div>
+                            <div className="hevy-streak-best">personal best: {best} days</div>
+                        </div>
+                    );
+                }}
+            </QueryStatus>
+        </RetroPanel>
+    );
 }
 
 export default HevyStreak;

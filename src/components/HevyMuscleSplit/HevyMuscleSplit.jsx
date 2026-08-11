@@ -1,5 +1,6 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
+import QueryStatus from '../QueryStatus/QueryStatus';
 import './HevyMuscleSplit.css';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -40,67 +41,68 @@ function HevyMuscleSplit() {
     );
 
     const error = setsError || templatesError;
-    const loaded = sets && templates;
+    const data = sets && templates ? { sets, templates } : null;
 
-    let body;
-    if (error) {
-        body = <p className="status-note">Couldn't load muscle split right now.</p>;
-    } else if (!loaded) {
-        body = <p className="status-note">Loading&hellip;</p>;
-    } else if (sets.length === 0) {
-        body = <p className="status-note">No sets logged in the last 30 days.</p>;
-    } else {
-        const muscleGroupById = new Map(templates.map((t) => [t.id, t.primary_muscle_group]));
-        const counts = new Map();
-        for (const set of sets) {
-            const raw = muscleGroupById.get(set.exercise_template_id);
-            const groupKey = RAW_TO_GROUP.get(raw) || 'other';
-            counts.set(groupKey, (counts.get(groupKey) || 0) + 1);
-        }
-        const total = sets.length;
-        const slices = GROUPS.map((group) => ({
-            ...group,
-            pct: Math.round(((counts.get(group.key) || 0) / total) * 1000) / 10,
-        })).filter((group) => group.pct > 0);
+    return (
+        <RetroPanel title="Muscle Split">
+            <QueryStatus error={error} data={data} errorLabel="Couldn't load muscle split right now.">
+                {({ sets, templates }) => {
+                    if (sets.length === 0) {
+                        return <p className="status-note">No sets logged in the last 30 days.</p>;
+                    }
 
-        const arcs = slices.reduce((built, slice) => {
-            const acc = built.length > 0 ? built[built.length - 1].acc : 0;
-            const len = (slice.pct / 100) * CIRCUMFERENCE;
-            built.push({ ...slice, dasharray: `${len} ${CIRCUMFERENCE - len}`, dashoffset: -acc, acc: acc + len });
-            return built;
-        }, []);
+                    const muscleGroupById = new Map(templates.map((t) => [t.id, t.primary_muscle_group]));
+                    const counts = new Map();
+                    for (const set of sets) {
+                        const raw = muscleGroupById.get(set.exercise_template_id);
+                        const groupKey = RAW_TO_GROUP.get(raw) || 'other';
+                        counts.set(groupKey, (counts.get(groupKey) || 0) + 1);
+                    }
+                    const total = sets.length;
+                    const slices = GROUPS.map((group) => ({
+                        ...group,
+                        pct: Math.round(((counts.get(group.key) || 0) / total) * 1000) / 10,
+                    })).filter((group) => group.pct > 0);
 
-        body = (
-            <div className="hevy-muscle-split">
-                <svg viewBox="0 0 100 100" width="130" height="130">
-                    {arcs.map((arc) => (
-                        <circle
-                            key={arc.key}
-                            cx="50"
-                            cy="50"
-                            r={RADIUS}
-                            fill="none"
-                            style={{ stroke: arc.color }}
-                            strokeWidth="14"
-                            strokeDasharray={arc.dasharray}
-                            strokeDashoffset={arc.dashoffset}
-                            transform="rotate(-90 50 50)"
-                        />
-                    ))}
-                </svg>
-                <div className="retro-crt-legend hevy-muscle-split-legend">
-                    {arcs.map((arc) => (
-                        <div key={arc.key} className="hevy-muscle-split-legend-row">
-                            <span className="hevy-muscle-split-swatch" style={{ background: arc.color }} />
-                            {arc.label} &mdash; {arc.pct}%
+                    const arcs = slices.reduce((built, slice) => {
+                        const acc = built.length > 0 ? built[built.length - 1].acc : 0;
+                        const len = (slice.pct / 100) * CIRCUMFERENCE;
+                        built.push({ ...slice, dasharray: `${len} ${CIRCUMFERENCE - len}`, dashoffset: -acc, acc: acc + len });
+                        return built;
+                    }, []);
+
+                    return (
+                        <div className="hevy-muscle-split">
+                            <svg viewBox="0 0 100 100" width="130" height="130">
+                                {arcs.map((arc) => (
+                                    <circle
+                                        key={arc.key}
+                                        cx="50"
+                                        cy="50"
+                                        r={RADIUS}
+                                        fill="none"
+                                        style={{ stroke: arc.color }}
+                                        strokeWidth="14"
+                                        strokeDasharray={arc.dasharray}
+                                        strokeDashoffset={arc.dashoffset}
+                                        transform="rotate(-90 50 50)"
+                                    />
+                                ))}
+                            </svg>
+                            <div className="retro-crt-legend hevy-muscle-split-legend">
+                                {arcs.map((arc) => (
+                                    <div key={arc.key} className="retro-crt-legend-row">
+                                        <span className="retro-crt-legend-swatch" style={{ background: arc.color }} />
+                                        {arc.label} &mdash; {arc.pct}%
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    return <HevyPanel title="Muscle Split">{body}</HevyPanel>;
+                    );
+                }}
+            </QueryStatus>
+        </RetroPanel>
+    );
 }
 
 export default HevyMuscleSplit;

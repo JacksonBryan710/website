@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
+import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import './Projects.css';
 
 function Projects() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: Projects';
-    }, []);
+    useDocumentTitle('Jackson Bryan: Projects');
 
     const { data: projects, error } = useSupabaseQuery(
         (supabase) => supabase.from('projects').select('*').order('sort_order', { ascending: true }),
@@ -25,18 +24,19 @@ function Projects() {
                 {projects && projects.length > 0 && (
                     <ul className="project-list">
                         {projects.map((project) => (
-                            <li key={project.id} className="retro-box project-card">
-                                <h2>{project.name}</h2>
-                                <p>{project.description}</p>
-                                <p className="project-tech">Built with: {project.tech}</p>
-                                <a
-                                    className="badge-link"
-                                    href={project.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {project.link_label}
-                                </a>
+                            <li key={project.id} className="project-card">
+                                <RetroPanel title={project.name}>
+                                    <p>{project.description}</p>
+                                    <p className="project-tech">Built with: {project.tech}</p>
+                                    <a
+                                        className="badge-link"
+                                        href={project.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {project.link_label}
+                                    </a>
+                                </RetroPanel>
                             </li>
                         ))}
                     </ul>
