@@ -3,6 +3,8 @@ import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import LetterboxdActivity from '../../components/LetterboxdActivity/LetterboxdActivity';
 import GoodreadsActivity from '../../components/GoodreadsActivity/GoodreadsActivity';
+import SpotifyTopTracks from '../../components/SpotifyTopTracks/SpotifyTopTracks';
+import SpotifyTopArtists from '../../components/SpotifyTopArtists/SpotifyTopArtists';
 import './Now.css';
 
 const elsewhere = [
@@ -24,6 +26,16 @@ function Now() {
             </header>
 
             <main className="page-stack">
+                <div className="now-row now-row-2col">
+                    <RetroPanel title="Top songs last month">
+                        <SpotifyTopTracks />
+                    </RetroPanel>
+
+                    <RetroPanel title="Top artists last month">
+                        <SpotifyTopArtists />
+                    </RetroPanel>
+                </div>
+
                 <RetroPanel title="Recently watched">
                     <LetterboxdActivity />
                 </RetroPanel>
