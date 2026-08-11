@@ -1,12 +1,10 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import './About.css';
 
 function About() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: About';
-    }, []);
+    useDocumentTitle('Jackson Bryan: About');
 
     return (
         <div id="about-page" className="page">

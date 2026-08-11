@@ -165,6 +165,10 @@ a:visited {
 	margin-bottom: 0;
 }
 
+.retro-crt-panel-body p {
+	line-height: 1.6;
+}
+
 /* Shared sunken legend-box chrome, reused by Frequency/MuscleSplit/
    DurationTrend. Each widget's own CSS still supplies inner layout (flex vs
    grid, gap) and spacing (padding, margin-top), since those vary. */
@@ -172,4 +176,40 @@ a:visited {
 	background: var(--retro-crt-header);
 	border: 1px solid;
 	border-color: #6a6a6a #fff #fff #6a6a6a;
+}
+
+/* One label-per-row legend line (swatch + text), reused by MuscleSplit and
+   DurationTrend. Frequency's legend is a different shape (one row of
+   swatches across a scale) and keeps its own markup. */
+.retro-crt-legend-row {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-size: 0.85rem;
+	font-family: var(--retro-font-display);
+}
+
+.retro-crt-legend-swatch {
+	width: 9px;
+	height: 9px;
+	display: inline-block;
+}
+
+/* Shared page shell: a flex column with consistent gaps, used by every page
+   for both the outer .page container and its <main>. */
+.page-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.page-subtitle {
+	text-align: center;
+	font-style: italic;
+	opacity: 0.85;
+	margin-top: 0;
+}
+
+.page-title:has(+ .page-subtitle) {
+	margin-bottom: 0.25rem;
 }

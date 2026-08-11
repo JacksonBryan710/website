@@ -90,8 +90,8 @@ function HevyMuscleSplit() {
                 </svg>
                 <div className="retro-crt-legend hevy-muscle-split-legend">
                     {arcs.map((arc) => (
-                        <div key={arc.key} className="hevy-muscle-split-legend-row">
-                            <span className="hevy-muscle-split-swatch" style={{ background: arc.color }} />
+                        <div key={arc.key} className="retro-crt-legend-row">
+                            <span className="retro-crt-legend-swatch" style={{ background: arc.color }} />
                             {arc.label} &mdash; {arc.pct}%
                         </div>
                     ))}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import HevyStreak from '../../components/HevyStreak/HevyStreak';
 import HevyLatestLift from '../../components/HevyLatestLift/HevyLatestLift';
 import HevyFrequency from '../../components/HevyFrequency/HevyFrequency';
@@ -8,18 +8,16 @@ import HevyDurationTrend from '../../components/HevyDurationTrend/HevyDurationTr
 import './Training.css';
 
 function Training() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: Training';
-    }, []);
+    useDocumentTitle('Jackson Bryan: Training');
 
     return (
-        <div id="training-page" className="page">
+        <div id="training-page" className="page page-stack">
             <header>
                 <h1 className="page-title">Training</h1>
-                <p className="training-subtitle">Pulled from Hevy.</p>
+                <p className="page-subtitle">Pulled from Hevy.</p>
             </header>
 
-            <main>
+            <main className="page-stack">
                 <div className="training-row training-row-2col">
                     <HevyStreak />
                     <HevyLatestLift />

@@ -7,10 +7,6 @@
     gap: 1.5rem;
 }
 
-.project-card .retro-crt-panel-body p {
-    line-height: 1.6;
-}
-
 .project-tech {
     font-size: 0.9rem;
     opacity: 0.8;

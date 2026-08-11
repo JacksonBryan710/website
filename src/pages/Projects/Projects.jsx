@@ -1,12 +1,10 @@
-import { useEffect } from 'react';
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import './Projects.css';
 
 function Projects() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: Projects';
-    }, []);
+    useDocumentTitle('Jackson Bryan: Projects');
 
     const { data: projects, error } = useSupabaseQuery(
         (supabase) => supabase.from('projects').select('*').order('sort_order', { ascending: true }),

@@ -165,8 +165,8 @@ function HevyDurationTrend() {
                     </div>
                     <div className="retro-crt-legend hevy-duration-trend-legend">
                         {[...lines].sort(byLegendOrder).map((r) => (
-                            <div key={r.key} className="hevy-duration-trend-legend-row">
-                                <span className="hevy-duration-trend-swatch" style={{ background: r.color }} />
+                            <div key={r.key} className="retro-crt-legend-row">
+                                <span className="retro-crt-legend-swatch" style={{ background: r.color }} />
                                 {r.name} &mdash; {r.avgMin} min avg
                             </div>
                         ))}

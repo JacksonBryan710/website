@@ -21,15 +21,15 @@ function LetterboxdActivity() {
     }));
 
     if (error) {
-        return <p className="now-note">Couldn't load recent Letterboxd activity right now.</p>;
+        return <p className="status-note">Couldn't load recent Letterboxd activity right now.</p>;
     }
 
     if (!films) {
-        return <p className="now-note">Loading recent films&hellip;</p>;
+        return <p className="status-note">Loading recent films&hellip;</p>;
     }
 
     if (films.length === 0) {
-        return <p className="now-note">No recent diary entries.</p>;
+        return <p className="status-note">No recent diary entries.</p>;
     }
 
     return (

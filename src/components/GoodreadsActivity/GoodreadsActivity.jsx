@@ -21,15 +21,15 @@ function GoodreadsActivity({ shelf = 'read', emptyLabel = 'No recent shelf entri
     }));
 
     if (error) {
-        return <p className="now-note">Couldn't load recent Goodreads activity right now.</p>;
+        return <p className="status-note">Couldn't load recent Goodreads activity right now.</p>;
     }
 
     if (!books) {
-        return <p className="now-note">Loading recent books&hellip;</p>;
+        return <p className="status-note">Loading recent books&hellip;</p>;
     }
 
     if (books.length === 0) {
-        return <p className="now-note">{emptyLabel}</p>;
+        return <p className="status-note">{emptyLabel}</p>;
     }
 
     return (

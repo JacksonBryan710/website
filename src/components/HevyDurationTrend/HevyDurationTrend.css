@@ -26,20 +26,6 @@
     gap: 0.3rem 0.75rem;
 }
 
-.hevy-duration-trend-legend-row {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.85rem;
-    font-family: var(--retro-font-display);
-}
-
-.hevy-duration-trend-swatch {
-    width: 9px;
-    height: 9px;
-    display: inline-block;
-}
-
 .hevy-duration-trend-total {
     font-size: 0.8rem;
     opacity: 0.65;

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDocumentTitle } from '../../lib/useDocumentTitle';
 import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import LetterboxdActivity from '../../components/LetterboxdActivity/LetterboxdActivity';
 import GoodreadsActivity from '../../components/GoodreadsActivity/GoodreadsActivity';
@@ -14,24 +14,22 @@ const elsewhere = [
 ];
 
 function Now() {
-    useEffect(() => {
-        document.title = 'Jackson Bryan: Now';
-    }, []);
+    useDocumentTitle('Jackson Bryan: Now');
 
     return (
-        <div id="now-page" className="page">
+        <div id="now-page" className="page page-stack">
             <header>
                 <h1 className="page-title">Now</h1>
-                <p className="now-subtitle">What I've been into lately &mdash; updated whenever I remember to.</p>
+                <p className="page-subtitle">What I've been into lately &mdash; updated whenever I remember to.</p>
             </header>
 
-            <main>
+            <main className="page-stack">
                 <RetroPanel title="Recently watched">
                     <LetterboxdActivity />
                 </RetroPanel>
 
                 <RetroPanel title="Favorite films">
-                    <p className="now-note">// top 4 coming soon</p>
+                    <p className="status-note">// top 4 coming soon</p>
                 </RetroPanel>
 
                 <RetroPanel title="Currently reading">
