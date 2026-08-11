@@ -1,0 +1,15 @@
+-- The prior migration granted service_role only insert/delete on
+-- spotify_now_playing (insert/delete are all refresh-spotify-now-playing
+-- calls), reasoning that select wasn't needed. Wrong: DELETE ... WHERE
+-- requires SELECT privilege to evaluate the WHERE clause, even for a role
+-- with BYPASSRLS -- confirmed live (`permission denied for table
+-- spotify_now_playing`, hint: "Grant the required privileges ... GRANT
+-- SELECT"). Left as a follow-up rather than editing the original grant
+-- statement, since that migration already ran against the live database --
+-- same reasoning as 20260808032052_revoke_authenticated_write_until_admin_auth.sql.
+--
+-- Likely also affects spotify_top_tracks/spotify_top_artists, whose select
+-- was revoked from service_role by
+-- 20260811034301_restrict_spotify_top_items_service_role_grants.sql for the
+-- same (incorrect) reasoning -- not fixed here, flagged separately.
+grant select on public.spotify_now_playing to service_role;
