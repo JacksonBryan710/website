@@ -1,6 +1,6 @@
 -- Tightens refresh-spotify-now-playing from once/minute to every 10 seconds
 -- so the widget reflects skips/song-end without a page refresh. pg_cron
--- (1.4+, which Supabase ships) supports sub-minute schedules via a plain
+-- (1.5.0+, which Supabase ships) supports sub-minute schedules via a plain
 -- "N seconds" string in place of the 5-field cron expression.
 --
 -- Rate-limit math still holds: same <=3 Spotify API calls per run as the
