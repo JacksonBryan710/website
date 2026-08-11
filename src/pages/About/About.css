@@ -1,9 +1,9 @@
-#about-page .retro-box p {
+#about-page .retro-crt-panel-body p {
     line-height: 1.6;
     font-size: 1.1rem;
     margin: 0 0 1rem;
 }
 
-#about-page .retro-box p:last-child {
+#about-page .retro-crt-panel-body p:last-child {
     margin-bottom: 0;
 }

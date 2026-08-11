@@ -15,15 +15,13 @@
     margin-top: 0;
 }
 
-#now-page section h2 {
-    font-family: var(--retro-font-display);
-    font-size: 1.6rem;
-    letter-spacing: 0.03em;
-    color: var(--retro-accent-2);
-    margin-top: 0;
+#now-page main {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-#now-page section p {
+#now-page .retro-crt-panel-body p {
     line-height: 1.6;
 }
 

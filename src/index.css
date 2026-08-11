@@ -117,8 +117,8 @@ a:visited {
 	margin-bottom: 1.5rem;
 }
 
-/* Nested "sunken CRT" double-bevel panel, for data-dense widgets (Training
-   page). Sits inside a .retro-box, not a replacement for it. */
+/* "Sunken CRT" double-bevel panel with title bar, used site-wide as the
+   default content block (via the RetroPanel component). */
 .retro-crt-panel {
 	border: 2px solid;
 	border-color: #e8e8e8 #000 #000 #e8e8e8;

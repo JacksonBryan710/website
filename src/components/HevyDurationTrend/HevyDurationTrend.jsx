@@ -1,5 +1,5 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
 import './HevyDurationTrend.css';
 
 const SESSIONS_PER_ROUTINE = 6;
@@ -177,7 +177,7 @@ function HevyDurationTrend() {
         }
     }
 
-    return <HevyPanel title="Duration">{body}</HevyPanel>;
+    return <RetroPanel title="Duration">{body}</RetroPanel>;
 }
 
 export default HevyDurationTrend;

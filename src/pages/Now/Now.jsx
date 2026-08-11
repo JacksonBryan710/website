@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import LetterboxdActivity from '../../components/LetterboxdActivity/LetterboxdActivity';
 import GoodreadsActivity from '../../components/GoodreadsActivity/GoodreadsActivity';
 import './Now.css';
@@ -25,28 +26,23 @@ function Now() {
             </header>
 
             <main>
-                <section className="retro-box">
-                    <h2>Recently watched</h2>
+                <RetroPanel title="Recently watched">
                     <LetterboxdActivity />
-                </section>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>Favorite films</h2>
+                <RetroPanel title="Favorite films">
                     <p className="now-note">// top 4 coming soon</p>
-                </section>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>Currently reading</h2>
+                <RetroPanel title="Currently reading">
                     <GoodreadsActivity shelf="currently-reading" emptyLabel="Not reading anything at the moment." />
-                </section>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>Recently read</h2>
+                <RetroPanel title="Recently read">
                     <GoodreadsActivity shelf="read" />
-                </section>
+                </RetroPanel>
 
-                <section className="retro-box">
-                    <h2>From the source</h2>
+                <RetroPanel title="From the source">
                     <p>Follow along with what I'm watching, reading, listening to, and my training:</p>
                     <ul className="badge-list">
                         {elsewhere.map((item) => (
@@ -63,7 +59,7 @@ function Now() {
                             </li>
                         ))}
                     </ul>
-                </section>
+                </RetroPanel>
             </main>
         </div>
     );

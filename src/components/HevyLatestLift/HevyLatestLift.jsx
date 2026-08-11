@@ -1,5 +1,5 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
 import './HevyLatestLift.css';
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -47,7 +47,7 @@ function HevyLatestLift() {
         );
     }
 
-    return <HevyPanel title="Latest Lift">{body}</HevyPanel>;
+    return <RetroPanel title="Latest Lift">{body}</RetroPanel>;
 }
 
 export default HevyLatestLift;

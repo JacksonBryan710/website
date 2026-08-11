@@ -1,5 +1,5 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
 import './HevyStreak.css';
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -55,7 +55,7 @@ function HevyStreak() {
         );
     }
 
-    return <HevyPanel title="Streak">{body}</HevyPanel>;
+    return <RetroPanel title="Streak">{body}</RetroPanel>;
 }
 
 export default HevyStreak;

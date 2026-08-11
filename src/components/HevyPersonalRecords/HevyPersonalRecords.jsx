@@ -1,5 +1,5 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
 import './HevyPersonalRecords.css';
 
 const KG_TO_LB = 2.20462262;
@@ -33,7 +33,7 @@ function HevyPersonalRecords() {
         );
     }
 
-    return <HevyPanel title="Personal Records">{body}</HevyPanel>;
+    return <RetroPanel title="Personal Records">{body}</RetroPanel>;
 }
 
 export default HevyPersonalRecords;

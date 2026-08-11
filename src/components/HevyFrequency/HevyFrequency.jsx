@@ -1,5 +1,5 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
 import './HevyFrequency.css';
 
 const WEEKS = 52;
@@ -64,7 +64,7 @@ function HevyFrequency() {
         );
     }
 
-    return <HevyPanel title="Frequency">{body}</HevyPanel>;
+    return <RetroPanel title="Frequency">{body}</RetroPanel>;
 }
 
 export default HevyFrequency;

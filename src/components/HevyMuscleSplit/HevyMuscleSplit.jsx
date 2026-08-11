@@ -1,5 +1,5 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
-import HevyPanel from '../HevyPanel/HevyPanel';
+import RetroPanel from '../RetroPanel/RetroPanel';
 import './HevyMuscleSplit.css';
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -100,7 +100,7 @@ function HevyMuscleSplit() {
         );
     }
 
-    return <HevyPanel title="Muscle Split">{body}</HevyPanel>;
+    return <RetroPanel title="Muscle Split">{body}</RetroPanel>;
 }
 
 export default HevyMuscleSplit;

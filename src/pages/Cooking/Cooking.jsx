@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
+import RetroPanel from '../../components/RetroPanel/RetroPanel';
 import './Cooking.css';
 
 function Cooking() {
@@ -23,7 +24,7 @@ function Cooking() {
                 {!error && !recipes && <p className="status-note">Loading recipes&hellip;</p>}
 
                 {recipes && (
-                    <div className="retro-box">
+                    <RetroPanel title="Recipes">
                         <table id="recipes">
                             <thead>
                                 <tr>
@@ -49,7 +50,7 @@ function Cooking() {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </RetroPanel>
                 )}
             </main>
         </div>
