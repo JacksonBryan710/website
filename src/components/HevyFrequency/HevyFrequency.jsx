@@ -1,5 +1,6 @@
 import { useSupabaseQuery } from '../../lib/useSupabaseQuery';
 import RetroPanel from '../RetroPanel/RetroPanel';
+import QueryStatus from '../QueryStatus/QueryStatus';
 import './HevyFrequency.css';
 
 const WEEKS = 52;
@@ -29,42 +30,41 @@ function HevyFrequency() {
         [],
     );
 
-    let body;
-    if (error) {
-        body = <p className="status-note">Couldn't load workout frequency right now.</p>;
-    } else if (!data) {
-        body = <p className="status-note">Loading&hellip;</p>;
-    } else {
-        const weeks = buildHeatmap(data);
-        body = (
-            <>
-                <p className="hevy-frequency-caption">workouts per week, past year</p>
-                <div className="hevy-frequency-grid">
-                    {weeks.map((week, i) => (
-                        <div
-                            key={i}
-                            className="hevy-frequency-cell"
-                            style={{ background: week.bg }}
-                            title={`${week.count} workouts`}
-                        />
-                    ))}
-                </div>
-                <div className="hevy-frequency-range">
-                    <span>52 weeks ago</span>
-                    <span>this week</span>
-                </div>
-                <div className="retro-crt-legend hevy-frequency-legend">
-                    <span>0 workouts</span>
-                    <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,0.08)' }} />
-                    <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,0.45)' }} />
-                    <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,1)' }} />
-                    <span>5+ workouts</span>
-                </div>
-            </>
-        );
-    }
-
-    return <RetroPanel title="Frequency">{body}</RetroPanel>;
+    return (
+        <RetroPanel title="Frequency">
+            <QueryStatus error={error} data={data} errorLabel="Couldn't load workout frequency right now.">
+                {(rows) => {
+                    const weeks = buildHeatmap(rows);
+                    return (
+                        <>
+                            <p className="hevy-frequency-caption">workouts per week, past year</p>
+                            <div className="hevy-frequency-grid">
+                                {weeks.map((week, i) => (
+                                    <div
+                                        key={i}
+                                        className="hevy-frequency-cell"
+                                        style={{ background: week.bg }}
+                                        title={`${week.count} workouts`}
+                                    />
+                                ))}
+                            </div>
+                            <div className="hevy-frequency-range">
+                                <span>52 weeks ago</span>
+                                <span>this week</span>
+                            </div>
+                            <div className="retro-crt-legend hevy-frequency-legend">
+                                <span>0 workouts</span>
+                                <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,0.08)' }} />
+                                <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,0.45)' }} />
+                                <span className="hevy-frequency-legend-swatch" style={{ background: 'rgba(57,255,20,1)' }} />
+                                <span>5+ workouts</span>
+                            </div>
+                        </>
+                    );
+                }}
+            </QueryStatus>
+        </RetroPanel>
+    );
 }
 
 export default HevyFrequency;
