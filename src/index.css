@@ -93,9 +93,19 @@ a:visited {
 	box-shadow: none;
 }
 
-/* Shared page layout: content column + big retro heading, used by every page */
+/* Shared page layout: content column + big retro heading, used by every page.
+   width: 100% + border-box matter here, not just cosmetically -- .page is a
+   flex item with auto cross-margins (margin: 0 auto for centering), which
+   per the flexbox spec makes it fit-content sized rather than stretched.
+   Left at the default width: auto, unbreakable nowrap content anywhere
+   inside (e.g. long Spotify track/artist names) inflates that fit-content
+   calculation past the viewport, widening the whole page instead of being
+   clipped/ellipsized where it occurs. width: 100% forces sizing from the
+   containing block instead. */
 .page {
 	max-width: 700px;
+	width: 100%;
+	box-sizing: border-box;
 	margin: 0 auto;
 	padding: 2rem 1rem 3rem;
 	flex: 1;
