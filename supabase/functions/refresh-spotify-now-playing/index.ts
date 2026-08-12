@@ -132,6 +132,26 @@ async function fetchLastPlayed(accessToken: string): Promise<{ track: SpotifyTra
   return items.length > 0 ? items[0] : null;
 }
 
+// Recently-played only needs to be checked on the old 1/minute cadence --
+// "last played Xm ago" is minute-resolution anyway (see formatTimeAgo on the
+// frontend) -- but it's invoked on every run of this function, which now
+// polls every 10s for currently-playing's sake. Caching it in-isolate for
+// 60s restores the original call volume for this one endpoint: without it,
+// Spotify started returning 429 QUOTA_EXCEEDED on recently-played once the
+// cron went from 1/min to 6/min (see 20260811080000's rate-limit math,
+// which held for currently-playing but not for this fallback in practice).
+const RECENTLY_PLAYED_CACHE_MS = 60_000;
+let cachedLastPlayed: { result: { track: SpotifyTrack; played_at: string } | null; fetchedAt: number } | null = null;
+
+async function fetchLastPlayedCached(accessToken: string): Promise<{ track: SpotifyTrack; played_at: string } | null> {
+  if (cachedLastPlayed && Date.now() - cachedLastPlayed.fetchedAt < RECENTLY_PLAYED_CACHE_MS) {
+    return cachedLastPlayed.result;
+  }
+  const result = await fetchLastPlayed(accessToken);
+  cachedLastPlayed = { result, fetchedAt: Date.now() };
+  return result;
+}
+
 // Fixed, well-known id for the table's one-and-only row (see
 // 20260811070100_make_spotify_now_playing_singleton.sql, which seeds it and
 // switches the table to this upsert-in-place model instead of
@@ -158,7 +178,18 @@ export default {
       if (playing) {
         row = { state: "playing", ...trackRow(playing), progress_ms: playing.progress_ms };
       } else {
-        const last = await fetchLastPlayed(accessToken);
+        // A recently-played failure (e.g. a transient Spotify rate limit)
+        // degrades to idle instead of throwing -- we already know nothing
+        // is currently playing at this point, so skipping the upsert
+        // entirely on this call would leave a stale 'playing' row frozen
+        // until the next successful fetch, which is the bug this guards
+        // against.
+        let last: { track: SpotifyTrack; played_at: string } | null = null;
+        try {
+          last = await fetchLastPlayedCached(accessToken);
+        } catch (err) {
+          console.error(`recently-played fetch failed, falling back to idle: ${errorMessage(err)}`);
+        }
         row = last ? { state: "recent", ...trackRow(last.track), played_at: last.played_at } : { state: "idle" };
       }
     } catch (err) {
