@@ -13,7 +13,7 @@
 // user-read-currently-playing and user-read-recently-played scopes, which
 // weren't required for the original user-top-read-only token.
 //
-// Meant to be invoked every minute by Supabase Cron, so it only accepts the
+// Meant to be invoked every 15s by Supabase Cron, so it only accepts the
 // project's secret key, not the public key.
 
 import "@supabase/functions-js/edge-runtime.d.ts";
@@ -132,11 +132,74 @@ async function fetchLastPlayed(accessToken: string): Promise<{ track: SpotifyTra
   return items.length > 0 ? items[0] : null;
 }
 
+// Recently-played only needs to be checked on the old 1/minute cadence --
+// "last played Xm ago" is minute-resolution anyway (see formatTimeAgo on the
+// frontend) -- but it's invoked on every run of this function, which polls
+// far more often for currently-playing's sake (15s, backed off from an
+// initial 10s -- see 20260812010000). Caching it in-isolate for 60s
+// restores the original call volume for this one endpoint: without it,
+// Spotify started returning 429 QUOTA_EXCEEDED on recently-played once the
+// cron cadence sped up, because this app isn't in Spotify's Extended Quota
+// Mode and so has a much stricter real limit than the commonly-cited
+// ~180-per-30s figure that assumes that tier.
+const RECENTLY_PLAYED_CACHE_MS = 60_000;
+let cachedLastPlayed: { result: { track: SpotifyTrack; played_at: string } | null; fetchedAt: number } | null = null;
+
+async function fetchLastPlayedCached(accessToken: string): Promise<{ track: SpotifyTrack; played_at: string } | null> {
+  if (cachedLastPlayed && Date.now() - cachedLastPlayed.fetchedAt < RECENTLY_PLAYED_CACHE_MS) {
+    return cachedLastPlayed.result;
+  }
+  try {
+    const result = await fetchLastPlayed(accessToken);
+    cachedLastPlayed = { result, fetchedAt: Date.now() };
+    return result;
+  } catch (err) {
+    // A 429 refreshes the cache's timestamp too (keeping whatever result
+    // was cached before, or null if there was none) -- otherwise a
+    // rate-limited call leaves the cache expired, and every run for the
+    // rest of the 15s window retries the same still-rate-limited request
+    // instead of backing off.
+    cachedLastPlayed = { result: cachedLastPlayed?.result ?? null, fetchedAt: Date.now() };
+    throw err;
+  }
+}
+
 // Fixed, well-known id for the table's one-and-only row (see
 // 20260811070100_make_spotify_now_playing_singleton.sql, which seeds it and
 // switches the table to this upsert-in-place model instead of
 // delete-then-insert).
 const ROW_ID = "00000000-0000-0000-0000-000000000000";
+
+// deno-lint-ignore no-explicit-any -- supabaseAdmin isn't generated-types
+// typed here (see the rest of this file's untyped .from() calls); only the
+// columns this function actually reads are pulled out below.
+type SupabaseAdminClient = any;
+
+// Last-resort fallback for the "nothing currently playing, and the
+// recently-played fetch also failed" case -- reads the row this same
+// function wrote last time instead of giving up to idle. Cold isolates
+// (empty in-isolate cache) hit this path too, not just repeat failures on a
+// warm one, so it has to go to the DB rather than only widening
+// fetchLastPlayedCached's in-memory cache.
+async function lastKnownRow(supabaseAdmin: SupabaseAdminClient): Promise<NowPlayingRow> {
+  const { data: existing } = await supabaseAdmin.from("spotify_now_playing").select("*").eq("id", ROW_ID).maybeSingle();
+  if (!existing || existing.state === "idle" || !existing.title) return { state: "idle" };
+
+  return {
+    state: "recent",
+    title: existing.title,
+    artist_names: existing.artist_names,
+    album: existing.album,
+    release_year: existing.release_year,
+    image_url: existing.image_url,
+    external_url: existing.external_url,
+    duration_ms: existing.duration_ms,
+    // The previous row was already 'recent' (has its own played_at) or was
+    // 'playing' (no played_at -- it just stopped, as far as we can tell,
+    // so "now" is the closest honest estimate).
+    played_at: existing.state === "recent" ? existing.played_at : new Date().toISOString(),
+  };
+}
 
 export default {
   fetch: withSupabase({ auth: ["secret"] }, async (_req, ctx) => {
@@ -158,8 +221,28 @@ export default {
       if (playing) {
         row = { state: "playing", ...trackRow(playing), progress_ms: playing.progress_ms };
       } else {
-        const last = await fetchLastPlayed(accessToken);
-        row = last ? { state: "recent", ...trackRow(last.track), played_at: last.played_at } : { state: "idle" };
+        // A recently-played failure (e.g. a transient Spotify rate limit)
+        // no longer throws -- we already know nothing is currently playing
+        // at this point, so skipping the upsert entirely on this call would
+        // leave a stale 'playing' row frozen until the next successful
+        // fetch, which is the bug this guards against.
+        let last: { track: SpotifyTrack; played_at: string } | null = null;
+        try {
+          last = await fetchLastPlayedCached(accessToken);
+        } catch (err) {
+          console.error(`recently-played fetch failed: ${errorMessage(err)}`);
+        }
+
+        if (last) {
+          row = { state: "recent", ...trackRow(last.track), played_at: last.played_at };
+        } else {
+          // Still no track (fetch failed and nothing cached in this
+          // isolate) -- fall back to whatever's already in the DB rather
+          // than idle. idle is meant to be rare (a brand-new account with
+          // zero history, per the top-of-file comment), not the state a
+          // transient API hiccup should produce every time it happens.
+          row = await lastKnownRow(ctx.supabaseAdmin);
+        }
       }
     } catch (err) {
       return Response.json({ ok: false, error: errorMessage(err) }, { status: 500 });
