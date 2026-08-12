@@ -149,9 +149,19 @@ async function fetchLastPlayedCached(accessToken: string): Promise<{ track: Spot
   if (cachedLastPlayed && Date.now() - cachedLastPlayed.fetchedAt < RECENTLY_PLAYED_CACHE_MS) {
     return cachedLastPlayed.result;
   }
-  const result = await fetchLastPlayed(accessToken);
-  cachedLastPlayed = { result, fetchedAt: Date.now() };
-  return result;
+  try {
+    const result = await fetchLastPlayed(accessToken);
+    cachedLastPlayed = { result, fetchedAt: Date.now() };
+    return result;
+  } catch (err) {
+    // A 429 refreshes the cache's timestamp too (keeping whatever result
+    // was cached before, or null if there was none) -- otherwise a
+    // rate-limited call leaves the cache expired, and every run for the
+    // rest of the 15s window retries the same still-rate-limited request
+    // instead of backing off.
+    cachedLastPlayed = { result: cachedLastPlayed?.result ?? null, fetchedAt: Date.now() };
+    throw err;
+  }
 }
 
 // Fixed, well-known id for the table's one-and-only row (see

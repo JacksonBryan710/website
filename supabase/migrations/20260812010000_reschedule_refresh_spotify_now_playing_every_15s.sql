@@ -7,9 +7,10 @@
 -- production this tripped 429 QUOTA_EXCEEDED on the recently-played
 -- fallback call on nearly every run. The Edge Function itself (see
 -- refresh-spotify-now-playing/index.ts) now also caches that fallback for
--- 60s and degrades to idle instead of aborting on failure, so a single
--- over-quota call no longer freezes the row -- this migration addresses the
--- root cause (call volume) rather than just the symptom.
+-- 60s and, on failure, preserves the previously-stored playback state via
+-- lastKnownRow() instead of aborting the whole run, so a single over-quota
+-- call no longer freezes the row -- this migration addresses the root cause
+-- (call volume) rather than just the symptom.
 
 select cron.unschedule('refresh-spotify-now-playing-every-10s');
 
