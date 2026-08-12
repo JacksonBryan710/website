@@ -9,8 +9,10 @@ import './SpotifyNowPlaying.css';
 // interval it refreshes is what makes the "LIVE" status pill honest (the
 // row would otherwise be fetched once on mount and never again, freezing
 // the widget at whatever was playing on page load) and also self-heals
-// within one interval from any transient bad read.
-const REFRESH_INTERVAL_MS = 10_000;
+// within one interval from any transient bad read. 15s rather than 10s
+// because this app isn't in Spotify's Extended Quota Mode -- see
+// 20260812010000_reschedule_refresh_spotify_now_playing_every_15s.sql.
+const REFRESH_INTERVAL_MS = 15_000;
 
 const STATUS_BY_STATE = {
     playing: { label: '● LIVE', className: 'spotify-now-playing-status-live' },
